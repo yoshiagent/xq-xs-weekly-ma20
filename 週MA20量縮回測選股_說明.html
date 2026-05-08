@@ -760,11 +760,11 @@ volMaVal = <span class="c-func">Average</span>(wVol, paramVolMa);
 <span class="c-keyword">else</span>
     pullbackPct = <span class="c-number">0</span>;
 
-<span class="c-comment">// 峰值距今幾根週K棒（>=2 代表回測已啟動）</span>
-peakBar   = <span class="c-func">NthHighestBar</span>(<span class="c-number">1</span>, <span class="c-func">GetField</span>(<span class="c-string">"Close"</span>, <span class="c-string">"W"</span>), paramLookback);
+<span class="c-comment">// 峰值距今幾根週K棒（以週 High 取峰，與 highestHigh 一致）</span>
+peakBar   = <span class="c-func">NthHighestBar</span>(<span class="c-number">1</span>, <span class="c-func">GetField</span>(<span class="c-string">"High"</span>, <span class="c-string">"W"</span>), paramLookback);
 
-<span class="c-comment">// 谷底距今幾根週K棒（0-1 代表剛找到支撐，可能正在啟動）</span>
-troughBar = <span class="c-func">NthLowestBar</span>(<span class="c-number">1</span>,  <span class="c-func">GetField</span>(<span class="c-string">"Close"</span>, <span class="c-string">"W"</span>), paramLookback);
+<span class="c-comment">// 谷底距今幾根週K棒（以週 Low 取谷，與 lowestLow 一致，回看 2x）</span>
+troughBar = <span class="c-func">NthLowestBar</span>(<span class="c-number">1</span>,  <span class="c-func">GetField</span>(<span class="c-string">"Low"</span>, <span class="c-string">"W"</span>), <span class="c-number">2</span>*paramLookback);
 
 <span class="c-section">// ── 壓力量 / 支撐量計算 ──────────────────────────────────</span>
 <span class="c-keyword">var</span>: i(<span class="c-number">0</span>), volAbove(<span class="c-number">0</span>), volBelow(<span class="c-number">0</span>), curPrice(<span class="c-number">0</span>);

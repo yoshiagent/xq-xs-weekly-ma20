@@ -80,11 +80,11 @@ if highestHigh <> 0 then
 else
     pullbackPct = 0;
 
-// 峰值距今幾根週K棒（>=2 代表回測已啟動）
-peakBar = NthHighestBar(1, GetField("Close", "W"), paramLookback);
+// 峰值距今幾根週K棒（以週 High 取峰，與 highestHigh 一致）
+peakBar = NthHighestBar(1, GetField("High", "W"), paramLookback);
 
-// 谷底距今幾根週K棒（0-1 代表剛找到支撐，可能正在啟動）
-troughBar = NthLowestBar(1, GetField("Close", "W"), paramLookback);
+// 谷底距今幾根週K棒（以週 Low 取谷，與 lowestLow 一致，回看 2x）
+troughBar = NthLowestBar(1, GetField("Low", "W"), 2*paramLookback);
 
 // ── 壓力量 / 支撐量計算 ──────────────────────────────────
 // 以今日收盤為分界，遍歷回看期間每根週K棒：
@@ -160,7 +160,6 @@ if isMaRising = true
     and hadHighDev = true
     and isPeakPast = true
     and isNearMa = true
-    and isVolShrink = true
 then begin
     ret = 1;
 
