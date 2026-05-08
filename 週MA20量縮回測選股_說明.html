@@ -502,6 +502,7 @@
 //   3. 目前以量縮方式回測（修正非恐慌賣壓）
 //   4. 當前乖離率已收斂至週MA20附近
 // 版本日期：2026-05-08
+// 修正紀錄：使用 GetField("Close","W") 明確取週資料
 // ============================================================</span>
 
 <span class="c-comment">// 確保足夠的歷史 K 棒長度（週K 20MA + 回看 26 週）</span>
@@ -523,6 +524,12 @@
 <span class="c-comment">// 均量計算期數（週）</span>
 <span class="c-keyword">var</span>: paramVolMa(<span class="c-number">10</span>);
 
+<span class="c-section">// ── 取週資料（明確指定 "W" 頻率）────────────────────────</span>
+<span class="c-keyword">var</span>: wClose(<span class="c-number">0</span>), wVol(<span class="c-number">0</span>);
+
+wClose = <span class="c-func">GetField</span>(<span class="c-string">"Close"</span>, <span class="c-string">"W"</span>);      <span class="c-comment">// 週收盤價</span>
+wVol   = <span class="c-func">GetField</span>(<span class="c-string">"Volume"</span>, <span class="c-string">"W"</span>);     <span class="c-comment">// 週成交量</span>
+
 <span class="c-section">// ── 計算核心變數 ─────────────────────────────────────────</span>
 <span class="c-keyword">var</span>: ma20Now(<span class="c-number">0</span>), ma20Prev(<span class="c-number">0</span>);
 <span class="c-keyword">var</span>: devNow(<span class="c-number">0</span>);
@@ -530,17 +537,17 @@
 <span class="c-keyword">var</span>: volMaVal(<span class="c-number">0</span>), volRatioNow(<span class="c-number">0</span>);
 
 <span class="c-comment">// 週MA20 本週與上週數值</span>
-ma20Now  = <span class="c-func">Average</span>(Close, <span class="c-number">20</span>);
-ma20Prev = <span class="c-func">Average</span>(Close, <span class="c-number">20</span>)[<span class="c-number">1</span>];   <span class="c-comment">// [1] 代表前一根週K棒</span>
+ma20Now  = <span class="c-func">Average</span>(wClose, <span class="c-number">20</span>);
+ma20Prev = <span class="c-func">Average</span>(wClose, <span class="c-number">20</span>)[<span class="c-number">1</span>];    <span class="c-comment">// [1] 代表前一根週K棒</span>
 
 <span class="c-comment">// 當前收盤對週MA20 的乖離率（%）</span>
 <span class="c-keyword">if</span> ma20Now &lt;&gt; <span class="c-number">0</span> <span class="c-keyword">then</span>
-    devNow = (Close - ma20Now) / ma20Now * <span class="c-number">100</span>
+    devNow = (wClose - ma20Now) / ma20Now * <span class="c-number">100</span>
 <span class="c-keyword">else</span>
     devNow = <span class="c-number">0</span>;
 
-<span class="c-comment">// 回看期間內的最高收盤價（用來計算歷史最大正乖離）</span>
-highestClose = <span class="c-func">Highest</span>(Close, paramLookback);
+<span class="c-comment">// 回看期間內的最高週收盤（用來計算歷史最大正乖離）</span>
+highestClose = <span class="c-func">Highest</span>(wClose, paramLookback);
 
 <span class="c-comment">// 歷史最大正乖離率（%）</span>
 <span class="c-keyword">if</span> ma20Now &lt;&gt; <span class="c-number">0</span> <span class="c-keyword">then</span>
@@ -549,11 +556,11 @@ highestClose = <span class="c-func">Highest</span>(Close, paramLookback);
     highestDev = <span class="c-number">0</span>;
 
 <span class="c-comment">// 週均量</span>
-volMaVal = <span class="c-func">Average</span>(Volume, paramVolMa);
+volMaVal = <span class="c-func">Average</span>(wVol, paramVolMa);
 
 <span class="c-comment">// 當前量與均量的比值</span>
 <span class="c-keyword">if</span> volMaVal &lt;&gt; <span class="c-number">0</span> <span class="c-keyword">then</span>
-    volRatioNow = Volume / volMaVal
+    volRatioNow = wVol / volMaVal
 <span class="c-keyword">else</span>
     volRatioNow = <span class="c-number">1</span>;
 
@@ -601,7 +608,7 @@ volMaVal = <span class="c-func">Average</span>(Volume, paramVolMa);
     <span class="c-func">OutputField2</span>(highestDev,    <span class="c-string">"期間最大正乖離(%)"</span>);
     <span class="c-func">OutputField3</span>(volRatioNow,   <span class="c-string">"量/均量比值"</span>);
     <span class="c-func">OutputField4</span>(ma20Now,       <span class="c-string">"週MA20"</span>);
-    <span class="c-func">OutputField5</span>(Close,         <span class="c-string">"收盤價"</span>);
+    <span class="c-func">OutputField5</span>(wClose,        <span class="c-string">"週收盤價"</span>);
 <span class="c-keyword">end</span>;</pre>
     </div>
   </section>
