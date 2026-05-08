@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>週MA20量縮回測選股 — 策略說明</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #080e18;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+      line-height: 1.7;
+      padding: 40px 20px 80px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid #2d3f55;
+      padding-bottom: 24px;
+      margin-bottom: 40px;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #0f2040;
+      border: 1px solid rgba(59,130,246,0.3);
+      color: #93c5fd;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    /* Section */
+    section {
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #3b82f6;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h2::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 16px;
+      background: #3b82f6;
+      border-radius: 2px;
+    }
+
+    /* Flow chart */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .flow-step {
+      background: #131f2e;
+      border: 1px solid #2d3f55;
+      border-radius: 8px;
+      padding: 16px 20px;
+      position: relative;
+    }
+
+    .flow-step + .flow-step {
+      margin-top: 0;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .flow-step:first-child {
+      border-radius: 8px 8px 0 0;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: '↓';
+      display: block;
+      text-align: center;
+      color: #3b82f6;
+      font-size: 18px;
+      margin: 0;
+      background: #131f2e;
+      border-left: 1px solid #2d3f55;
+      border-right: 1px solid #2d3f55;
+      padding: 4px 0;
+    }
+
+    .step-label {
+      font-size: 11px;
+      color: #3b82f6;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .step-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 4px;
+    }
+
+    .step-desc {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .step-code {
+      display: inline-block;
+      background: #07111e;
+      border: 1px solid #2d3f55;
+      color: #7dd3fc;
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-top: 6px;
+    }
+
+    .trigger-step {
+      background: #0f2040;
+      border-color: rgba(59,130,246,0.4);
+    }
+
+    .trigger-step .step-title {
+      color: #93c5fd;
+    }
+
+    /* Table */
+    .table-wrap {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #2d3f55;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead {
+      background: #0f2040;
+    }
+
+    th {
+      padding: 12px 16px;
+      text-align: left;
+      color: #93c5fd;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #2d3f55;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #2d3f55;
+      color: #e2e8f0;
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) td {
+      background: rgba(19,31,46,0.5);
+    }
+
+    td code {
+      background: #07111e;
+      border: 1px solid #2d3f55;
+      color: #7dd3fc;
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    td .default-val {
+      display: inline-block;
+      background: rgba(59,130,246,0.15);
+      color: #3b82f6;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 1px 8px;
+      border-radius: 4px;
+    }
+
+    td .tune-hint {
+      display: block;
+      color: #94a3b8;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    /* Callout */
+    .callout {
+      background: #0f2040;
+      border: 1px solid rgba(59,130,246,0.3);
+      border-left: 3px solid #3b82f6;
+      border-radius: 6px;
+      padding: 14px 18px;
+      color: #93c5fd;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+
+    .callout strong {
+      color: #e2e8f0;
+    }
+
+    /* Output fields */
+    .output-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .output-card {
+      background: #131f2e;
+      border: 1px solid #2d3f55;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    .output-num {
+      font-size: 11px;
+      color: #3b82f6;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .output-name {
+      font-size: 13px;
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    /* Code block */
+    .code-wrap {
+      background: #07111e;
+      border: 1px solid #2d3f55;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: #0d1b2a;
+      border-bottom: 1px solid #2d3f55;
+    }
+
+    .code-filename {
+      font-size: 12px;
+      color: #7dd3fc;
+      font-family: "Courier New", monospace;
+    }
+
+    .copy-btn {
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(59,130,246,0.3);
+      color: #93c5fd;
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(59,130,246,0.3);
+    }
+
+    .copy-btn.copied {
+      color: #86efac;
+      border-color: rgba(134,239,172,0.3);
+      background: rgba(134,239,172,0.1);
+    }
+
+    pre {
+      margin: 0;
+      padding: 20px;
+      overflow-x: auto;
+      font-family: "Courier New", Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      color: #e2e8f0;
+      white-space: pre;
+    }
+
+    .c-comment { color: #64748b; }
+    .c-keyword  { color: #c084fc; }
+    .c-func     { color: #7dd3fc; }
+    .c-string   { color: #86efac; }
+    .c-number   { color: #fb923c; }
+    .c-section  { color: #94a3b8; font-style: italic; }
+
+    /* Footer */
+    footer {
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid #2d3f55;
+      color: #94a3b8;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="tag">選股腳本（Screener）· 週K線</div>
+    <h1>週MA20 量縮回測選股</h1>
+    <p class="subtitle">篩選週MA20 上揚、曾有正乖離過大、目前量縮修正回均線附近的個股</p>
+  </header>
+
+  <!-- 策略邏輯 -->
+  <section>
+    <h2>策略邏輯</h2>
+    <div class="flow">
+
+      <div class="flow-step">
+        <div class="step-label">條件一</div>
+        <div class="step-title">週MA20 斜率向上</div>
+        <div class="step-desc">本週均線值 &gt; 上週均線值，確認中期多頭趨勢仍在</div>
+        <span class="step-code">Average(Close,20) &gt; Average(Close,20)[1]</span>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-label">條件二</div>
+        <div class="step-title">近期曾有顯著正乖離</div>
+        <div class="step-desc">回看期間（預設 13 週）內，收盤最高點曾高於週MA20 達門檻幅度，代表股價曾強勢衝高過熱</div>
+        <span class="step-code">Highest(Close, 13) / MA20 − 1 ≥ 8%</span>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-label">條件三</div>
+        <div class="step-title">量縮修正（非恐慌賣壓）</div>
+        <div class="step-desc">本週成交量 &lt; 10週均量的 85%，確認回調是自然換手而非主力出貨</div>
+        <span class="step-code">Volume / Average(Volume,10) &lt; 0.85</span>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-label">條件四</div>
+        <div class="step-title">乖離收斂至均線附近</div>
+        <div class="step-desc">當前收盤與週MA20的乖離率絕對值 ≤ 3%，代表修正已完成，均線支撐帶到位</div>
+        <span class="step-code">|（Close − MA20）/ MA20| ≤ 3%</span>
+      </div>
+
+      <div class="flow-step trigger-step">
+        <div class="step-label">✅ 觸發輸出</div>
+        <div class="step-title">四條件同時成立 → ret = 1</div>
+        <div class="step-desc">股票進入選股結果，同步輸出五個九宮格欄位供分析</div>
+      </div>
+
+    </div>
+
+    <div class="callout">
+      <strong>使用建議：</strong>篩出結果後，建議搭配週K線圖人工確認，重點觀察下影線支撐與量縮是否明顯；等下週週K收線確認守穩後再評估進場。
+    </div>
+  </section>
+
+  <!-- 可調整參數 -->
+  <section>
+    <h2>可調整參數一覽</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>變數名稱</th>
+            <th>預設值</th>
+            <th>說明</th>
+            <th>調整建議</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>paramDevHigh</code></td>
+            <td><span class="default-val">8.0 %</span></td>
+            <td>回看期間內，股價曾高於週MA20 多少才算「乖離過大」</td>
+            <td>
+              <span class="tune-hint">篩出太多 → 調高至 10–12%</span>
+              <span class="tune-hint">篩出太少 → 降至 5–6%</span>
+            </td>
+          </tr>
+          <tr>
+            <td><code>paramDevNear</code></td>
+            <td><span class="default-val">3.0 %</span></td>
+            <td>當前乖離率絕對值需收斂至此範圍內，才視為回到均線附近（±N%）</td>
+            <td>
+              <span class="tune-hint">更貼近均線 → 調至 2%</span>
+              <span class="tune-hint">容許範圍寬一點 → 調至 4%</span>
+            </td>
+          </tr>
+          <tr>
+            <td><code>paramVolRatio</code></td>
+            <td><span class="default-val">0.85</span></td>
+            <td>量縮閾值，本週量 / 均量須低於此比例才符合量縮條件</td>
+            <td>
+              <span class="tune-hint">要求更明顯量縮 → 調至 0.70</span>
+              <span class="tune-hint">放寬量縮標準 → 調至 0.95</span>
+            </td>
+          </tr>
+          <tr>
+            <td><code>paramLookback</code></td>
+            <td><span class="default-val">13 週</span></td>
+            <td>往前看幾根週K棒確認曾有高乖離（13週≒3個月）</td>
+            <td>
+              <span class="tune-hint">抓更長週期高點 → 調至 20–26 週</span>
+              <span class="tune-hint">只看近期 → 調至 8 週</span>
+            </td>
+          </tr>
+          <tr>
+            <td><code>paramVolMa</code></td>
+            <td><span class="default-val">10 週</span></td>
+            <td>計算均量所用的週期數，作為量縮比較基準</td>
+            <td>
+              <span class="tune-hint">一般不需調整，維持 10 週即可</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 輸出欄位 -->
+  <section>
+    <h2>九宮格輸出欄位</h2>
+    <div class="output-grid">
+      <div class="output-card">
+        <div class="output-num">OutputField 1</div>
+        <div class="output-name">當前乖離率（%）</div>
+      </div>
+      <div class="output-card">
+        <div class="output-num">OutputField 2</div>
+        <div class="output-name">期間最大正乖離（%）</div>
+      </div>
+      <div class="output-card">
+        <div class="output-num">OutputField 3</div>
+        <div class="output-name">量 / 均量比值</div>
+      </div>
+      <div class="output-card">
+        <div class="output-num">OutputField 4</div>
+        <div class="output-name">週MA20 數值</div>
+      </div>
+      <div class="output-card">
+        <div class="output-num">OutputField 5</div>
+        <div class="output-name">收盤價</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 程式碼 -->
+  <section>
+    <h2>XScript 完整程式碼</h2>
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-filename">週MA20量縮回測選股.xs</span>
+        <button class="copy-btn" onclick="copyCode(this)">複製</button>
+      </div>
+      <pre id="xsCode"><span class="c-comment">// ============================================================
+// 策略名稱：週MA20量縮回測選股
+// 執行環境：選股腳本（Screener）/ 週K線圖
+// 策略邏輯：
+//   1. 週MA20 斜率向上（多頭趨勢確認）
+//   2. 近期曾有顯著正乖離（股價一度強勢衝高）
+//   3. 目前以量縮方式回測（修正非恐慌賣壓）
+//   4. 當前乖離率已收斂至週MA20附近
+// 版本日期：2026-05-08
+// ============================================================</span>
+
+<span class="c-comment">// 確保足夠的歷史 K 棒長度（週K 20MA + 回看 26 週）</span>
+<span class="c-func">SetTotalBar</span>(<span class="c-number">260</span>);
+
+<span class="c-section">// ── 參數設定 ────────────────────────────────────────────</span>
+<span class="c-comment">// 正乖離觸發門檻（%）：股價曾高於週MA20 多少才算「乖離過大」</span>
+<span class="c-keyword">var</span>: paramDevHigh(<span class="c-number">8.0</span>);
+
+<span class="c-comment">// 回測完成門檻（%）：當前乖離率的絕對值小於此值，視為回到均線附近</span>
+<span class="c-keyword">var</span>: paramDevNear(<span class="c-number">3.0</span>);
+
+<span class="c-comment">// 量縮判斷：目前量 &lt; 均量的比例倍數（&lt;1 = 量縮）</span>
+<span class="c-keyword">var</span>: paramVolRatio(<span class="c-number">0.85</span>);
+
+<span class="c-comment">// 回看週數：往前幾根週K棒內確認曾有高乖離</span>
+<span class="c-keyword">var</span>: paramLookback(<span class="c-number">13</span>);
+
+<span class="c-comment">// 均量計算期數（週）</span>
+<span class="c-keyword">var</span>: paramVolMa(<span class="c-number">10</span>);
+
+<span class="c-section">// ── 計算核心變數 ─────────────────────────────────────────</span>
+<span class="c-keyword">var</span>: ma20Now(<span class="c-number">0</span>), ma20Prev(<span class="c-number">0</span>);
+<span class="c-keyword">var</span>: devNow(<span class="c-number">0</span>);
+<span class="c-keyword">var</span>: highestClose(<span class="c-number">0</span>), highestDev(<span class="c-number">0</span>);
+<span class="c-keyword">var</span>: volMaVal(<span class="c-number">0</span>), volRatioNow(<span class="c-number">0</span>);
+
+<span class="c-comment">// 週MA20 本週與上週數值</span>
+ma20Now  = <span class="c-func">Average</span>(Close, <span class="c-number">20</span>);
+ma20Prev = <span class="c-func">Average</span>(Close, <span class="c-number">20</span>)[<span class="c-number">1</span>];   <span class="c-comment">// [1] 代表前一根週K棒</span>
+
+<span class="c-comment">// 當前收盤對週MA20 的乖離率（%）</span>
+<span class="c-keyword">if</span> ma20Now &lt;&gt; <span class="c-number">0</span> <span class="c-keyword">then</span>
+    devNow = (Close - ma20Now) / ma20Now * <span class="c-number">100</span>
+<span class="c-keyword">else</span>
+    devNow = <span class="c-number">0</span>;
+
+<span class="c-comment">// 回看期間內的最高收盤價（用來計算歷史最大正乖離）</span>
+highestClose = <span class="c-func">Highest</span>(Close, paramLookback);
+
+<span class="c-comment">// 歷史最大正乖離率（%）</span>
+<span class="c-keyword">if</span> ma20Now &lt;&gt; <span class="c-number">0</span> <span class="c-keyword">then</span>
+    highestDev = (highestClose - ma20Now) / ma20Now * <span class="c-number">100</span>
+<span class="c-keyword">else</span>
+    highestDev = <span class="c-number">0</span>;
+
+<span class="c-comment">// 週均量</span>
+volMaVal = <span class="c-func">Average</span>(Volume, paramVolMa);
+
+<span class="c-comment">// 當前量與均量的比值</span>
+<span class="c-keyword">if</span> volMaVal &lt;&gt; <span class="c-number">0</span> <span class="c-keyword">then</span>
+    volRatioNow = Volume / volMaVal
+<span class="c-keyword">else</span>
+    volRatioNow = <span class="c-number">1</span>;
+
+<span class="c-section">// ── 布林輔助旗標 ─────────────────────────────────────────</span>
+<span class="c-keyword">var</span>: isMaRising(<span class="c-keyword">false</span>);     <span class="c-comment">// 週MA20 斜率向上</span>
+<span class="c-keyword">var</span>: hadHighDev(<span class="c-keyword">false</span>);     <span class="c-comment">// 曾有顯著正乖離</span>
+<span class="c-keyword">var</span>: isNearMa(<span class="c-keyword">false</span>);       <span class="c-comment">// 當前已回到均線附近（乖離收斂）</span>
+<span class="c-keyword">var</span>: isVolShrink(<span class="c-keyword">false</span>);    <span class="c-comment">// 量縮確認</span>
+
+<span class="c-comment">// 條件一：週MA20 上揚</span>
+<span class="c-keyword">if</span> ma20Now &gt; ma20Prev <span class="c-keyword">then</span>
+    isMaRising = <span class="c-keyword">true</span>
+<span class="c-keyword">else</span>
+    isMaRising = <span class="c-keyword">false</span>;
+
+<span class="c-comment">// 條件二：回看期間內曾有正乖離 &gt;= paramDevHigh</span>
+<span class="c-keyword">if</span> highestDev &gt;= paramDevHigh <span class="c-keyword">then</span>
+    hadHighDev = <span class="c-keyword">true</span>
+<span class="c-keyword">else</span>
+    hadHighDev = <span class="c-keyword">false</span>;
+
+<span class="c-comment">// 條件三：當前乖離率絕對值 &lt;= paramDevNear（回到均線附近）</span>
+<span class="c-comment">// 允許略低於MA20（-paramDevNear ~ +paramDevNear）</span>
+<span class="c-keyword">if</span> devNow &lt;= paramDevNear <span class="c-keyword">and</span> devNow &gt;= (-<span class="c-number">1</span> * paramDevNear) <span class="c-keyword">then</span>
+    isNearMa = <span class="c-keyword">true</span>
+<span class="c-keyword">else</span>
+    isNearMa = <span class="c-keyword">false</span>;
+
+<span class="c-comment">// 條件四：量縮（本週成交量 &lt; 均量 * paramVolRatio）</span>
+<span class="c-keyword">if</span> volRatioNow &lt; paramVolRatio <span class="c-keyword">then</span>
+    isVolShrink = <span class="c-keyword">true</span>
+<span class="c-keyword">else</span>
+    isVolShrink = <span class="c-keyword">false</span>;
+
+<span class="c-section">// ── 選股觸發 ─────────────────────────────────────────────</span>
+<span class="c-keyword">if</span> isMaRising = <span class="c-keyword">true</span>
+    <span class="c-keyword">and</span> hadHighDev = <span class="c-keyword">true</span>
+    <span class="c-keyword">and</span> isNearMa = <span class="c-keyword">true</span>
+    <span class="c-keyword">and</span> isVolShrink = <span class="c-keyword">true</span>
+<span class="c-keyword">then begin</span>
+    ret = <span class="c-number">1</span>;
+
+    <span class="c-comment">// 九宮格輸出欄位</span>
+    <span class="c-func">OutputField1</span>(devNow,        <span class="c-string">"當前乖離率(%)"</span>);
+    <span class="c-func">OutputField2</span>(highestDev,    <span class="c-string">"期間最大正乖離(%)"</span>);
+    <span class="c-func">OutputField3</span>(volRatioNow,   <span class="c-string">"量/均量比值"</span>);
+    <span class="c-func">OutputField4</span>(ma20Now,       <span class="c-string">"週MA20"</span>);
+    <span class="c-func">OutputField5</span>(Close,         <span class="c-string">"收盤價"</span>);
+<span class="c-keyword">end</span>;</pre>
+    </div>
+  </section>
+
+  <footer>
+    <p>策略腳本：週MA20量縮回測選股.xs　·　執行環境：XQ 全球贏家 / 週K線選股腳本　·　整理日期：2026-05-08</p>
+  </footer>
+
+  <script>
+    function copyCode(btn) {
+      const pre = document.getElementById('xsCode');
+      const text = pre.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '已複製 ✓';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '複製';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+
+</div>
+</body>
+</html>
