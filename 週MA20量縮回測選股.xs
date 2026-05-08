@@ -156,10 +156,9 @@ else
     isVolShrink = false;
 
 // ── 選股觸發 ─────────────────────────────────────────────
-if isMaRising = true
-    and hadHighDev = true
-    and isPeakPast = true
-    and isNearMa = true
+// 暫時最寬鬆版：只要近期有高點（非本週）且已開始回檔即選出
+if peakBar >= 1
+   and pullbackPct > 0
 then begin
     ret = 1;
 
