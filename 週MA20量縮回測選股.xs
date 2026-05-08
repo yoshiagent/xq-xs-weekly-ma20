@@ -144,4 +144,6 @@ then begin
     OutputField9(volBelow,      "支撐量(週加總)");
     OutputField10(alertCount,   "高檔長黑爆量(次)");
     OutputField11(highestDev,   "期間最大正乖離(%)");
+    outputfield(21, GetField("成交金額(億)", "D"), 1, "成值");
+    outputfield(22, GetField("總市值(元)", "D")/1000000, 0, "市值", order:=1);
 end;
