@@ -112,6 +112,48 @@ if peakBar >= 2 then ...  // 確認回測已在進行中
 
 ---
 
+### NthLowestBar — 極小值位置函數
+
+計算序列資料的第 N 個極小值距當期 K 棒的**相對位置（距今幾根棒）**。
+
+```
+回傳值 = NthLowestBar(第幾個極小值, 數列, 期數)
+```
+
+| 參數 | 說明 |
+|------|------|
+| 第1參數 | 要取第幾個極小值（1 = 最低，2 = 次低…） |
+| 第2參數 | 價格數列 |
+| 第3參數 | 回看期數 |
+
+**實戰應用：確認回測谷底位置**
+
+```pascal
+var: troughBar(0), lowestClose(0), troughDevPct(0);
+
+// 谷底距今幾根週K棒（0=本週最低，1=上週最低…）
+troughBar   = NthLowestBar(1, GetField("Close","W"), paramLookback);
+
+// 谷底收盤價
+lowestClose = Lowest(GetField("Close","W"), paramLookback);
+
+// 谷底相對 MA20 的乖離（確認 MA20 是否確實撐住）
+if Wma20 <> 0 then
+    troughDevPct = (lowestClose - Wma20) / Wma20 * 100
+else
+    troughDevPct = 0;
+```
+
+**NthHighestBar vs NthLowestBar 對照：**
+| 函數 | 用途 |
+|------|------|
+| `NthHighestBar(1, series, N)` | 峰值距今幾棒（確認已見頂） |
+| `NthLowestBar(1, series, N)` | 谷底距今幾棒（確認已見底） |
+| `Highest(series, N)` | 取期間最高**值** |
+| `Lowest(series, N)` | 取期間最低**值** |
+
+---
+
 ## 五、常用函數速查
 
 ```

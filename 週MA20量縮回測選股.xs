@@ -12,53 +12,44 @@
 //   v2 - 使用 GetField("Close","W") 明確取週資料
 //   v3 - 改用 xf_GetValue("W",Wma20,1) 取前一週MA20，消除警告
 //   v4 - 加入 NthHighestBar 確認峰值已在 2 週前以上
+//   v5 - 加入 NthLowestBar 谷底位置、峰谷落差、壓力/支撐量計算
 // ============================================================
 
-// 確保足夠的歷史 K 棒長度（週K 20MA + 回看 26 週）
+// 確保足夠的歷史 K 棒長度
 SetTotalBar(260);
 
 // ── 參數設定 ────────────────────────────────────────────
-// 正乖離觸發門檻（%）：股價曾高於週MA20 多少才算「乖離過大」
-var: paramDevHigh(8.0);
-
-// 回測完成門檻（%）：當前乖離率的絕對值小於此值，視為回到均線附近
-var: paramDevNear(3.0);
-
-// 量縮判斷：目前量 < 均量的比例倍數（<1 = 量縮）
-var: paramVolRatio(0.85);
-
-// 回看週數：往前幾根週K棒內確認曾有高乖離
-var: paramLookback(13);
-
-// 均量計算期數（週）
-var: paramVolMa(10);
-
-// 峰值需在幾週前以上，才確認回測已啟動（0 = 本週仍在高點，不符合）
-var: paramPeakDelay(2);
+var: paramDevHigh(8.0);     // 正乖離觸發門檻（%）
+var: paramDevNear(3.0);     // 回測完成門檻（%）
+var: paramVolRatio(0.85);   // 量縮比例閾值
+var: paramLookback(13);     // 回看週數
+var: paramVolMa(10);        // 均量計算期數
+var: paramPeakDelay(2);     // 峰值需在幾週前以上才確認回測啟動
 
 // ── 週資料（明確指定頻率）───────────────────────────────
 var: wClose(0), wVol(0), Wma20(0);
 
-wClose = GetField("Close", "W");               // 週收盤價
-wVol   = GetField("Volume", "W");              // 週成交量
-Wma20  = Average(GetField("Close", "W"), 20);  // 週MA20
+wClose = GetField("Close", "W");
+wVol   = GetField("Volume", "W");
+Wma20  = Average(GetField("Close", "W"), 20);
 
 // ── 計算核心變數 ─────────────────────────────────────────
 var: devNow(0);
 var: highestClose(0), highestDev(0);
+var: lowestClose(0), peakToTrough(0);
 var: volMaVal(0), volRatioNow(0);
-var: peakBar(0);
-var: pullbackPct(0);    // 從近期最高週收盤回檔至今日收盤的幅度（%）
+var: peakBar(0), troughBar(0);
+var: pullbackPct(0);
 
 // 當前日收盤對週MA20 的乖離率（%）
-// 用 GetField("Close","D") 取日收盤，與週MA20比較
 if Wma20 <> 0 then
     devNow = (GetField("Close", "D") - Wma20) / Wma20 * 100
 else
     devNow = 0;
 
-// 回看期間內的最高週收盤（用來計算歷史最大正乖離）
-highestClose = Highest(wClose, paramLookback);
+// 回看期間最高 / 最低週收盤
+highestClose = Highest(GetField("Close", "W"), paramLookback);
+lowestClose  = Lowest(GetField("Close", "W"), paramLookback);
 
 // 歷史最大正乖離率（%）
 if Wma20 <> 0 then
@@ -66,59 +57,82 @@ if Wma20 <> 0 then
 else
     highestDev = 0;
 
-// 週均量
-volMaVal = Average(wVol, paramVolMa);
+// 峰谷落差（%）：從高點到回測谷底跌了多少（5-20% 為合理洗盤區間）
+if highestClose <> 0 then
+    peakToTrough = (highestClose - lowestClose) / highestClose * 100
+else
+    peakToTrough = 0;
 
-// 當前量與均量的比值
+// 週均量與量縮比值
+volMaVal = Average(wVol, paramVolMa);
 if volMaVal <> 0 then
     volRatioNow = wVol / volMaVal
 else
     volRatioNow = 1;
 
-// 最高週收盤距今幾根週K棒
-// 回傳 0 = 本週就是最高點（尚未開始回測）；>= 2 = 峰值已過，回測啟動中
-peakBar = NthHighestBar(1, GetField("Close", "W"), paramLookback);
-
-// 從近期最高週收盤回檔至今日收盤的幅度（%），正值代表已下跌
+// 從近期最高週收盤回檔至今日收盤的幅度（%）
 if highestClose <> 0 then
     pullbackPct = (highestClose - GetField("Close", "D")) / highestClose * 100
 else
     pullbackPct = 0;
 
+// 峰值距今幾根週K棒（>=2 代表回測已啟動）
+peakBar = NthHighestBar(1, GetField("Close", "W"), paramLookback);
+
+// 谷底距今幾根週K棒（0-1 代表剛找到支撐，可能正在啟動）
+troughBar = NthLowestBar(1, GetField("Close", "W"), paramLookback);
+
+// ── 壓力量 / 支撐量計算 ──────────────────────────────────
+// 以今日收盤為分界，遍歷回看期間每根週K棒：
+//   壓力量：週收盤 > 今日收盤 → 價位之上的歷史成交量（解套賣壓）
+//   支撐量：前低 <= 週收盤 <= 今日收盤 → 今日價至前低之間的歷史成交量（套牢支撐）
+var: i(0), volAbove(0), volBelow(0), curPrice(0);
+
+curPrice = GetField("Close", "D");
+
+for i = 0 to paramLookback - 1 begin
+    // 壓力：週收盤在當前價位之上
+    if GetField("Close", "W")[i] > curPrice then
+        volAbove = volAbove + GetField("Volume", "W")[i];
+
+    // 支撐：週收盤介於前一谷底到當前價位之間
+    if GetField("Close", "W")[i] >= lowestClose and
+       GetField("Close", "W")[i] <= curPrice then
+        volBelow = volBelow + GetField("Volume", "W")[i];
+end;
+
 // ── 布林輔助旗標 ─────────────────────────────────────────
-var: isMaRising(false);     // 週MA20 斜率向上
-var: hadHighDev(false);     // 曾有顯著正乖離
-var: isPeakPast(false);     // 峰值已在 paramPeakDelay 週前以上
-var: isNearMa(false);       // 當前已回到均線附近（乖離收斂）
-var: isVolShrink(false);    // 量縮確認
+var: isMaRising(false);
+var: hadHighDev(false);
+var: isPeakPast(false);
+var: isNearMa(false);
+var: isVolShrink(false);
 
 // 條件一：週MA20 上揚
-// xf_GetValue("W", Wma20, 1) = 取前一根週K棒的 Wma20 值（官方正確寫法）
 if Wma20 > xf_GetValue("W", Wma20, 1) then
     isMaRising = true
 else
     isMaRising = false;
 
-// 條件二：回看期間內曾有正乖離 >= paramDevHigh
+// 條件二：曾有顯著正乖離
 if highestDev >= paramDevHigh then
     hadHighDev = true
 else
     hadHighDev = false;
 
-// 條件三：峰值已在 paramPeakDelay 週前以上（確認回測已啟動，非本週才見頂）
+// 條件三：峰值已在 paramPeakDelay 週前以上
 if peakBar >= paramPeakDelay then
     isPeakPast = true
 else
     isPeakPast = false;
 
-// 條件四：當前乖離率絕對值 <= paramDevNear（回到均線附近）
-// 允許略低於MA20（-paramDevNear ~ +paramDevNear）
+// 條件四：當前乖離率收斂至均線附近
 if devNow <= paramDevNear and devNow >= (-1 * paramDevNear) then
     isNearMa = true
 else
     isNearMa = false;
 
-// 條件五：量縮（本週成交量 < 均量 * paramVolRatio）
+// 條件五：量縮
 if volRatioNow < paramVolRatio then
     isVolShrink = true
 else
@@ -134,10 +148,13 @@ then begin
     ret = 1;
 
     // 九宮格輸出欄位
-    OutputField1(devNow,                   "當前乖離率(%)");
-    OutputField2(highestDev,               "期間最大正乖離(%)");
-    OutputField3(pullbackPct,              "近高回檔幅度(%)");
-    OutputField4(peakBar,                  "峰值距今(週)");
-    OutputField5(volRatioNow,              "量/均量比值");
-    OutputField6(GetField("Close", "D"),   "日收盤價");
+    OutputField1(devNow,        "當前乖離率(%)");
+    OutputField2(pullbackPct,   "近高回檔幅度(%)");
+    OutputField3(peakToTrough,  "峰谷落差(%)");
+    OutputField4(peakBar,       "峰值距今(週)");
+    OutputField5(troughBar,     "谷底距今(週)");
+    OutputField6(volRatioNow,   "量/均量比值");
+    OutputField7(highestDev,    "期間最大正乖離(%)");
+    OutputField8(volAbove,      "壓力量(週加總)");
+    OutputField9(volBelow,      "支撐量(週加總)");
 end;
