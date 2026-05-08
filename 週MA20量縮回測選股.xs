@@ -103,22 +103,19 @@ for i = 0 to paramLookback - 1 begin
     if GetField("Close", "W")[i] >= lowestClose and
        GetField("Close", "W")[i] <= curPrice then
         volBelow = volBelow + GetField("Volume", "W")[i];
-
-    // 高檔長黑爆量警訊偵測
-    // 長黑：（開盤 - 收盤）/ 開盤 >= paramLongBlack%
-    // 爆量：當週成交量 > 均量 × paramHeavyVol
-    // 高檔：當週收盤 > 週MA20（在均線之上才算高檔出貨）
-    if GetField("Open", "W")[i] <> 0 then
-        blackBody = (GetField("Open", "W")[i] - GetField("Close", "W")[i])
-                    / GetField("Open", "W")[i] * 100
-    else
-        blackBody = 0;
-
-    if blackBody >= paramLongBlack
-       and GetField("Volume", "W")[i] > volMaVal * paramHeavyVol
-       and GetField("Close", "W")[i] > Wma20 then
-        alertCount = alertCount + 1;
 end;
+
+// 高檔長黑爆量警訊：只檢查近期峰值那根週K棒
+// 峰值週若為長黑（實體跌幅 >= paramLongBlack%）且爆量，視為高檔出貨訊號
+if GetField("Open", "W")[peakBar] <> 0 then
+    blackBody = (GetField("Open", "W")[peakBar] - GetField("Close", "W")[peakBar])
+                / GetField("Open", "W")[peakBar] * 100
+else
+    blackBody = 0;
+
+if blackBody >= paramLongBlack
+   and GetField("Volume", "W")[peakBar] > volMaVal * paramHeavyVol then
+    alertCount = 1;
 
 // ── 布林輔助旗標 ─────────────────────────────────────────
 var: isMaRising(false);

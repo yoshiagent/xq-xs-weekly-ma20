@@ -663,7 +663,7 @@
         <div class="reading-body">
           <div class="reading-title">高檔長黑爆量警訊</div>
           <div class="reading-field">OutputField 10</div>
-          <div class="reading-desc">回看期間內，在週MA20 之上出現「實體跌幅 ≥ 3% 且成交量 &gt; 均量 1.5 倍」的週K棒次數。<br><strong style="color:#f87171;">0 次</strong> → 無出貨訊號，結構健康；<strong style="color:#fb923c;">1 次</strong> → 留意；<strong style="color:#f87171;">≥ 2 次</strong> → 高度警戒，此波回測可能是主力出貨，建議放棄或等待進一步確認。</div>
+          <div class="reading-desc">專門檢查<strong style="color:#e2e8f0;">近期峰值那根週K棒</strong>是否同時出現長黑（實體跌幅 ≥ 3%）與爆量（&gt; 均量 1.5 倍）。<br><strong style="color:#34d399;">0</strong> → 峰值收盤正常，無出貨疑慮；<strong style="color:#f87171;">1</strong> → 高點那週長黑爆量，此波回測可能是主力出貨，建議放棄或等更多確認。</div>
         </div>
       </div>
 
@@ -781,18 +781,18 @@ curPrice = <span class="c-func">GetField</span>(<span class="c-string">"Close"</
        <span class="c-func">GetField</span>(<span class="c-string">"Close"</span>, <span class="c-string">"W"</span>)[i] &lt;= curPrice <span class="c-keyword">then</span>
         volBelow = volBelow + <span class="c-func">GetField</span>(<span class="c-string">"Volume"</span>, <span class="c-string">"W"</span>)[i];
 
-    <span class="c-comment">// 高檔長黑爆量警訊偵測</span>
-    <span class="c-keyword">if</span> <span class="c-func">GetField</span>(<span class="c-string">"Open"</span>, <span class="c-string">"W"</span>)[i] &lt;&gt; <span class="c-number">0</span> <span class="c-keyword">then</span>
-        blackBody = (<span class="c-func">GetField</span>(<span class="c-string">"Open"</span>, <span class="c-string">"W"</span>)[i] - <span class="c-func">GetField</span>(<span class="c-string">"Close"</span>, <span class="c-string">"W"</span>)[i])
-                    / <span class="c-func">GetField</span>(<span class="c-string">"Open"</span>, <span class="c-string">"W"</span>)[i] * <span class="c-number">100</span>
-    <span class="c-keyword">else</span>
-        blackBody = <span class="c-number">0</span>;
-
-    <span class="c-keyword">if</span> blackBody &gt;= paramLongBlack
-       <span class="c-keyword">and</span> <span class="c-func">GetField</span>(<span class="c-string">"Volume"</span>, <span class="c-string">"W"</span>)[i] &gt; volMaVal * paramHeavyVol
-       <span class="c-keyword">and</span> <span class="c-func">GetField</span>(<span class="c-string">"Close"</span>, <span class="c-string">"W"</span>)[i] &gt; Wma20 <span class="c-keyword">then</span>
-        alertCount = alertCount + <span class="c-number">1</span>;
 <span class="c-keyword">end</span>;
+
+<span class="c-comment">// 高檔長黑爆量警訊：只檢查近期峰值那根週K棒</span>
+<span class="c-keyword">if</span> <span class="c-func">GetField</span>(<span class="c-string">"Open"</span>, <span class="c-string">"W"</span>)[peakBar] &lt;&gt; <span class="c-number">0</span> <span class="c-keyword">then</span>
+    blackBody = (<span class="c-func">GetField</span>(<span class="c-string">"Open"</span>, <span class="c-string">"W"</span>)[peakBar] - <span class="c-func">GetField</span>(<span class="c-string">"Close"</span>, <span class="c-string">"W"</span>)[peakBar])
+                / <span class="c-func">GetField</span>(<span class="c-string">"Open"</span>, <span class="c-string">"W"</span>)[peakBar] * <span class="c-number">100</span>
+<span class="c-keyword">else</span>
+    blackBody = <span class="c-number">0</span>;
+
+<span class="c-keyword">if</span> blackBody &gt;= paramLongBlack
+   <span class="c-keyword">and</span> <span class="c-func">GetField</span>(<span class="c-string">"Volume"</span>, <span class="c-string">"W"</span>)[peakBar] &gt; volMaVal * paramHeavyVol <span class="c-keyword">then</span>
+    alertCount = <span class="c-number">1</span>;
 
 <span class="c-section">// ── 布林輔助旗標 ─────────────────────────────────────────</span>
 <span class="c-keyword">var</span>: isMaRising(<span class="c-keyword">false</span>);
