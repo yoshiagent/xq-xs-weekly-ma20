@@ -14,6 +14,7 @@
 //   v4 - 加入 NthHighestBar 確認峰值已在 2 週前以上
 //   v5 - 加入 NthLowestBar 谷底位置、峰谷落差、壓力/支撐量計算
 //   v6 - 加入高檔長黑爆量警訊計數
+//   v7 - 改用週 High 取峰值、週 Low（2x 回看）取谷底
 // ============================================================
 
 // 確保足夠的歷史 K 棒長度
@@ -38,8 +39,8 @@ Wma20  = Average(GetField("Close", "W"), 20);
 
 // ── 計算核心變數 ─────────────────────────────────────────
 var: devNow(0);
-var: highestClose(0), highestDev(0);
-var: lowestClose(0), peakToTrough(0);
+var: highestHigh(0), highestDev(0);
+var: lowestLow(0), peakToTrough(0);
 var: volMaVal(0), volRatioNow(0);
 var: peakBar(0), troughBar(0);
 var: pullbackPct(0);
@@ -50,19 +51,19 @@ if Wma20 <> 0 then
 else
     devNow = 0;
 
-// 回看期間最高 / 最低週收盤
-highestClose = Highest(GetField("Close", "W"), paramLookback);
-lowestClose  = Lowest(GetField("Close", "W"), paramLookback);
+// 回看期間週高點最高值 / 週低點最低值（低點用 2x 回看抓更深支撐）
+highestHigh = Highest(GetField("High", "W"), paramLookback);
+lowestLow   = Lowest(GetField("Low", "W"), 2*paramLookback);
 
 // 歷史最大正乖離率（%）
 if Wma20 <> 0 then
-    highestDev = (highestClose - Wma20) / Wma20 * 100
+    highestDev = (highestHigh - Wma20) / Wma20 * 100
 else
     highestDev = 0;
 
 // 峰谷落差（%）：從高點到回測谷底跌了多少（5-20% 為合理洗盤區間）
-if highestClose <> 0 then
-    peakToTrough = (highestClose - lowestClose) / highestClose * 100
+if highestHigh <> 0 then
+    peakToTrough = (highestHigh - lowestLow) / highestHigh * 100
 else
     peakToTrough = 0;
 
@@ -74,8 +75,8 @@ else
     volRatioNow = 1;
 
 // 從近期最高週收盤回檔至今日收盤的幅度（%）
-if highestClose <> 0 then
-    pullbackPct = (highestClose - GetField("Close", "D")) / highestClose * 100
+if highestHigh <> 0 then
+    pullbackPct = (highestHigh - GetField("Close", "D")) / highestHigh * 100
 else
     pullbackPct = 0;
 
@@ -100,7 +101,7 @@ for i = 0 to paramLookback - 1 begin
         volAbove = volAbove + GetField("Volume", "W")[i];
 
     // 支撐：週收盤介於前一谷底到當前價位之間
-    if GetField("Close", "W")[i] >= lowestClose and
+    if GetField("Low", "W")[i] >= lowestLow and
        GetField("Close", "W")[i] <= curPrice then
         volBelow = volBelow + GetField("Volume", "W")[i];
 end;
