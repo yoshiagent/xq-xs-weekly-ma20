@@ -29,6 +29,7 @@ var: paramVolMa(10);        // 均量計算期數
 var: paramPeakDelay(2);     // 峰值需在幾週前以上才確認回測啟動
 var: paramLongBlack(3.0);   // 長黑實體門檻（%）：開盤 vs 收盤跌幅超過此值視為長黑
 var: paramHeavyVol(1.5);    // 爆量倍數門檻：成交量 > 均量 × 此倍數視為爆量
+var: paramAnglePeriod(4);   // 線性迴歸角度計算期數（週）
 
 // ── 週資料（明確指定頻率）───────────────────────────────
 var: wClose(0), wVol(0), Wma20(0);
@@ -44,6 +45,7 @@ var: lowestLow(0), peakToTrough(0);
 var: volMaVal(0), volRatioNow(0);
 var: peakBar(0), troughBar(0);
 var: pullbackPct(0);
+var: ma20Angle(0);
 
 // 當前日收盤對週MA20 的乖離率（%）
 if Wma20 <> 0 then
@@ -79,6 +81,9 @@ if highestHigh <> 0 then
     pullbackPct = (highestHigh - GetField("Close", "D")) / highestHigh * 100
 else
     pullbackPct = 0;
+
+// 週MA20 線性迴歸角度（正值代表均線向上）
+ma20Angle = LinearRegAngle(Wma20, paramAnglePeriod);
 
 // 峰值距今幾根週K棒（以週 High 取峰，與 highestHigh 一致）
 peakBar = NthHighestBar(1, GetField("High", "W"), paramLookback);
@@ -118,46 +123,9 @@ if blackBody >= paramLongBlack
    and GetField("Volume", "W")[peakBar] > volMaVal * paramHeavyVol then
     alertCount = 1;
 
-// ── 布林輔助旗標 ─────────────────────────────────────────
-var: isMaRising(false);
-var: hadHighDev(false);
-var: isPeakPast(false);
-var: isNearMa(false);
-var: isVolShrink(false);
-
-// 條件一：週MA20 上揚
-if Wma20 > xf_GetValue("W", Wma20, 1) then
-    isMaRising = true
-else
-    isMaRising = false;
-
-// 條件二：曾有顯著正乖離
-if highestDev >= paramDevHigh then
-    hadHighDev = true
-else
-    hadHighDev = false;
-
-// 條件三：峰值已在 paramPeakDelay 週前以上
-if peakBar >= paramPeakDelay then
-    isPeakPast = true
-else
-    isPeakPast = false;
-
-// 條件四：當前乖離率收斂至均線附近
-if devNow <= paramDevNear and devNow >= (-1 * paramDevNear) then
-    isNearMa = true
-else
-    isNearMa = false;
-
-// 條件五：量縮
-if volRatioNow < paramVolRatio then
-    isVolShrink = true
-else
-    isVolShrink = false;
-
 // ── 選股觸發 ─────────────────────────────────────────────
-// 條件：週MA20上揚 + 開始回檔 + 股價 >= 50
-if isMaRising = true
+// 條件：週MA20迴歸角度向上 + 開始回檔 + 股價 >= 50
+if ma20Angle > 0
    and peakBar >= 1
    and pullbackPct > 0
    and curPrice >= 50
@@ -171,8 +139,9 @@ then begin
     OutputField4(peakBar,       "峰值距今(週)");
     OutputField5(troughBar,     "谷底距今(週)");
     OutputField6(volRatioNow,   "量/均量比值");
-    OutputField7(highestDev,    "期間最大正乖離(%)");
+    OutputField7(ma20Angle,     "MA20迴歸角度");
     OutputField8(volAbove,      "壓力量(週加總)");
     OutputField9(volBelow,      "支撐量(週加總)");
     OutputField10(alertCount,   "高檔長黑爆量(次)");
+    OutputField11(highestDev,   "期間最大正乖離(%)");
 end;
