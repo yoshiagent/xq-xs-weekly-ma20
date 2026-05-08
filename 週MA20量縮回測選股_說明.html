@@ -488,14 +488,18 @@
       </div>
       <div class="output-card">
         <div class="output-num">OutputField 3</div>
-        <div class="output-name">峰值距今（週）</div>
+        <div class="output-name">近高回檔幅度（%）</div>
       </div>
       <div class="output-card">
         <div class="output-num">OutputField 4</div>
-        <div class="output-name">量 / 均量比值</div>
+        <div class="output-name">峰值距今（週）</div>
       </div>
       <div class="output-card">
         <div class="output-num">OutputField 5</div>
+        <div class="output-name">量 / 均量比值</div>
+      </div>
+      <div class="output-card">
+        <div class="output-num">OutputField 6</div>
         <div class="output-name">日收盤價</div>
       </div>
     </div>
@@ -559,6 +563,7 @@ Wma20  = <span class="c-func">Average</span>(<span class="c-func">GetField</span
 <span class="c-keyword">var</span>: highestClose(<span class="c-number">0</span>), highestDev(<span class="c-number">0</span>);
 <span class="c-keyword">var</span>: volMaVal(<span class="c-number">0</span>), volRatioNow(<span class="c-number">0</span>);
 <span class="c-keyword">var</span>: peakBar(<span class="c-number">0</span>);
+<span class="c-keyword">var</span>: pullbackPct(<span class="c-number">0</span>);    <span class="c-comment">// 從近期最高週收盤回檔至今日收盤的幅度（%）</span>
 
 <span class="c-comment">// 當前日收盤對週MA20 的乖離率（%）</span>
 <span class="c-keyword">if</span> Wma20 &lt;&gt; <span class="c-number">0</span> <span class="c-keyword">then</span>
@@ -586,6 +591,12 @@ volMaVal = <span class="c-func">Average</span>(wVol, paramVolMa);
 
 <span class="c-comment">// 最高週收盤距今幾根週K棒（0=本週見頂，>=2=回測已啟動）</span>
 peakBar = <span class="c-func">NthHighestBar</span>(<span class="c-number">1</span>, <span class="c-func">GetField</span>(<span class="c-string">"Close"</span>, <span class="c-string">"W"</span>), paramLookback);
+
+<span class="c-comment">// 從近期最高週收盤回檔至今日收盤的幅度（%），正值代表已下跌</span>
+<span class="c-keyword">if</span> highestClose &lt;&gt; <span class="c-number">0</span> <span class="c-keyword">then</span>
+    pullbackPct = (highestClose - <span class="c-func">GetField</span>(<span class="c-string">"Close"</span>, <span class="c-string">"D"</span>)) / highestClose * <span class="c-number">100</span>
+<span class="c-keyword">else</span>
+    pullbackPct = <span class="c-number">0</span>;
 
 <span class="c-section">// ── 布林輔助旗標 ─────────────────────────────────────────</span>
 <span class="c-keyword">var</span>: isMaRising(<span class="c-keyword">false</span>);     <span class="c-comment">// 週MA20 斜率向上</span>
@@ -636,9 +647,10 @@ peakBar = <span class="c-func">NthHighestBar</span>(<span class="c-number">1</sp
     <span class="c-comment">// 九宮格輸出欄位</span>
     <span class="c-func">OutputField1</span>(devNow,                          <span class="c-string">"當前乖離率(%)"</span>);
     <span class="c-func">OutputField2</span>(highestDev,                      <span class="c-string">"期間最大正乖離(%)"</span>);
-    <span class="c-func">OutputField3</span>(peakBar,                         <span class="c-string">"峰值距今(週)"</span>);
-    <span class="c-func">OutputField4</span>(volRatioNow,                     <span class="c-string">"量/均量比值"</span>);
-    <span class="c-func">OutputField5</span>(<span class="c-func">GetField</span>(<span class="c-string">"Close"</span>, <span class="c-string">"D"</span>),          <span class="c-string">"日收盤價"</span>);
+    <span class="c-func">OutputField3</span>(pullbackPct,                     <span class="c-string">"近高回檔幅度(%)"</span>);
+    <span class="c-func">OutputField4</span>(peakBar,                         <span class="c-string">"峰值距今(週)"</span>);
+    <span class="c-func">OutputField5</span>(volRatioNow,                     <span class="c-string">"量/均量比值"</span>);
+    <span class="c-func">OutputField6</span>(<span class="c-func">GetField</span>(<span class="c-string">"Close"</span>, <span class="c-string">"D"</span>),          <span class="c-string">"日收盤價"</span>);
 <span class="c-keyword">end</span>;</pre>
     </div>
   </section>

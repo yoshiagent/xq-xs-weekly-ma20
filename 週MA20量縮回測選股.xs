@@ -48,6 +48,7 @@ var: devNow(0);
 var: highestClose(0), highestDev(0);
 var: volMaVal(0), volRatioNow(0);
 var: peakBar(0);
+var: pullbackPct(0);    // 從近期最高週收盤回檔至今日收盤的幅度（%）
 
 // 當前日收盤對週MA20 的乖離率（%）
 // 用 GetField("Close","D") 取日收盤，與週MA20比較
@@ -77,6 +78,12 @@ else
 // 最高週收盤距今幾根週K棒
 // 回傳 0 = 本週就是最高點（尚未開始回測）；>= 2 = 峰值已過，回測啟動中
 peakBar = NthHighestBar(1, GetField("Close", "W"), paramLookback);
+
+// 從近期最高週收盤回檔至今日收盤的幅度（%），正值代表已下跌
+if highestClose <> 0 then
+    pullbackPct = (highestClose - GetField("Close", "D")) / highestClose * 100
+else
+    pullbackPct = 0;
 
 // ── 布林輔助旗標 ─────────────────────────────────────────
 var: isMaRising(false);     // 週MA20 斜率向上
@@ -129,7 +136,8 @@ then begin
     // 九宮格輸出欄位
     OutputField1(devNow,                   "當前乖離率(%)");
     OutputField2(highestDev,               "期間最大正乖離(%)");
-    OutputField3(peakBar,                  "峰值距今(週)");
-    OutputField4(volRatioNow,              "量/均量比值");
-    OutputField5(GetField("Close", "D"),   "日收盤價");
+    OutputField3(pullbackPct,              "近高回檔幅度(%)");
+    OutputField4(peakBar,                  "峰值距今(週)");
+    OutputField5(volRatioNow,              "量/均量比值");
+    OutputField6(GetField("Close", "D"),   "日收盤價");
 end;
