@@ -4,12 +4,14 @@
 // 策略邏輯：
 //   1. 週MA20 斜率向上（多頭趨勢確認）
 //   2. 近期曾有顯著正乖離（股價一度強勢衝高）
-//   3. 目前以量縮方式回測（修正非恐慌賣壓）
-//   4. 當前乖離率已收斂至週MA20附近
+//   3. 峰值已在 2 週前以上（確認回測已啟動）
+//   4. 目前以量縮方式回測（修正非恐慌賣壓）
+//   5. 當前乖離率已收斂至週MA20附近
 // 版本日期：2026-05-08
 // 修正紀錄：
 //   v2 - 使用 GetField("Close","W") 明確取週資料
 //   v3 - 改用 xf_GetValue("W",Wma20,1) 取前一週MA20，消除警告
+//   v4 - 加入 NthHighestBar 確認峰值已在 2 週前以上
 // ============================================================
 
 // 確保足夠的歷史 K 棒長度（週K 20MA + 回看 26 週）
@@ -31,6 +33,9 @@ var: paramLookback(13);
 // 均量計算期數（週）
 var: paramVolMa(10);
 
+// 峰值需在幾週前以上，才確認回測已啟動（0 = 本週仍在高點，不符合）
+var: paramPeakDelay(2);
+
 // ── 週資料（明確指定頻率）───────────────────────────────
 var: wClose(0), wVol(0), Wma20(0);
 
@@ -42,6 +47,7 @@ Wma20  = Average(GetField("Close", "W"), 20);  // 週MA20
 var: devNow(0);
 var: highestClose(0), highestDev(0);
 var: volMaVal(0), volRatioNow(0);
+var: peakBar(0);
 
 // 當前日收盤對週MA20 的乖離率（%）
 // 用 GetField("Close","D") 取日收盤，與週MA20比較
@@ -68,9 +74,14 @@ if volMaVal <> 0 then
 else
     volRatioNow = 1;
 
+// 最高週收盤距今幾根週K棒
+// 回傳 0 = 本週就是最高點（尚未開始回測）；>= 2 = 峰值已過，回測啟動中
+peakBar = NthHighestBar(1, GetField("Close", "W"), paramLookback);
+
 // ── 布林輔助旗標 ─────────────────────────────────────────
 var: isMaRising(false);     // 週MA20 斜率向上
 var: hadHighDev(false);     // 曾有顯著正乖離
+var: isPeakPast(false);     // 峰值已在 paramPeakDelay 週前以上
 var: isNearMa(false);       // 當前已回到均線附近（乖離收斂）
 var: isVolShrink(false);    // 量縮確認
 
@@ -87,14 +98,20 @@ if highestDev >= paramDevHigh then
 else
     hadHighDev = false;
 
-// 條件三：當前乖離率絕對值 <= paramDevNear（回到均線附近）
+// 條件三：峰值已在 paramPeakDelay 週前以上（確認回測已啟動，非本週才見頂）
+if peakBar >= paramPeakDelay then
+    isPeakPast = true
+else
+    isPeakPast = false;
+
+// 條件四：當前乖離率絕對值 <= paramDevNear（回到均線附近）
 // 允許略低於MA20（-paramDevNear ~ +paramDevNear）
 if devNow <= paramDevNear and devNow >= (-1 * paramDevNear) then
     isNearMa = true
 else
     isNearMa = false;
 
-// 條件四：量縮（本週成交量 < 均量 * paramVolRatio）
+// 條件五：量縮（本週成交量 < 均量 * paramVolRatio）
 if volRatioNow < paramVolRatio then
     isVolShrink = true
 else
@@ -103,6 +120,7 @@ else
 // ── 選股觸發 ─────────────────────────────────────────────
 if isMaRising = true
     and hadHighDev = true
+    and isPeakPast = true
     and isNearMa = true
     and isVolShrink = true
 then begin
@@ -111,7 +129,7 @@ then begin
     // 九宮格輸出欄位
     OutputField1(devNow,                   "當前乖離率(%)");
     OutputField2(highestDev,               "期間最大正乖離(%)");
-    OutputField3(volRatioNow,              "量/均量比值");
-    OutputField4(Wma20,                    "週MA20");
+    OutputField3(peakBar,                  "峰值距今(週)");
+    OutputField4(volRatioNow,              "量/均量比值");
     OutputField5(GetField("Close", "D"),   "日收盤價");
 end;

@@ -82,7 +82,37 @@ if Wma20 > xf_GetValue("W", Wma20, 1) then isMaRising = true;
 
 ---
 
-## 四、常用函數速查
+## 四、NthHighestBar — 極大值位置函數
+
+計算序列資料的第 N 個極大值距當期 K 棒的**相對位置（距今幾根棒）**。
+
+```
+回傳值 = NthHighestBar(第幾個極大值, 數列, 期數)
+```
+
+| 參數 | 說明 |
+|------|------|
+| 第1參數 | 要取第幾個極大值（1 = 最高，2 = 次高…） |
+| 第2參數 | 價格數列（Close、High、GetField("Close","W") 等） |
+| 第3參數 | 回看期數 |
+
+**實戰應用：確認峰值已在 N 週前（回測啟動確認）**
+
+```pascal
+var: peakBar(0);
+peakBar = NthHighestBar(1, GetField("Close","W"), 13);
+// peakBar = 0  → 最高點在本週（尚未開始回測）
+// peakBar >= 2 → 最高點在 2 週前以上（回測已啟動）
+if peakBar >= 2 then ...  // 確認回測已在進行中
+```
+
+**與 `Highest` 的差異：**
+- `Highest(series, N)` → 回傳最高**值**
+- `NthHighestBar(1, series, N)` → 回傳最高值距今**幾根棒**
+
+---
+
+## 五、常用函數速查
 
 ```
 // 均線
