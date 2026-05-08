@@ -13,6 +13,7 @@
 //   v3 - 改用 xf_GetValue("W",Wma20,1) 取前一週MA20，消除警告
 //   v4 - 加入 NthHighestBar 確認峰值已在 2 週前以上
 //   v5 - 加入 NthLowestBar 谷底位置、峰谷落差、壓力/支撐量計算
+//   v6 - 加入高檔長黑爆量警訊計數
 // ============================================================
 
 // 確保足夠的歷史 K 棒長度
@@ -25,6 +26,8 @@ var: paramVolRatio(0.85);   // 量縮比例閾值
 var: paramLookback(13);     // 回看週數
 var: paramVolMa(10);        // 均量計算期數
 var: paramPeakDelay(2);     // 峰值需在幾週前以上才確認回測啟動
+var: paramLongBlack(3.0);   // 長黑實體門檻（%）：開盤 vs 收盤跌幅超過此值視為長黑
+var: paramHeavyVol(1.5);    // 爆量倍數門檻：成交量 > 均量 × 此倍數視為爆量
 
 // ── 週資料（明確指定頻率）───────────────────────────────
 var: wClose(0), wVol(0), Wma20(0);
@@ -87,6 +90,7 @@ troughBar = NthLowestBar(1, GetField("Close", "W"), paramLookback);
 //   壓力量：週收盤 > 今日收盤 → 價位之上的歷史成交量（解套賣壓）
 //   支撐量：前低 <= 週收盤 <= 今日收盤 → 今日價至前低之間的歷史成交量（套牢支撐）
 var: i(0), volAbove(0), volBelow(0), curPrice(0);
+var: alertCount(0), blackBody(0);   // 高檔長黑爆量警訊計數、實體幅度暫存
 
 curPrice = GetField("Close", "D");
 
@@ -99,6 +103,21 @@ for i = 0 to paramLookback - 1 begin
     if GetField("Close", "W")[i] >= lowestClose and
        GetField("Close", "W")[i] <= curPrice then
         volBelow = volBelow + GetField("Volume", "W")[i];
+
+    // 高檔長黑爆量警訊偵測
+    // 長黑：（開盤 - 收盤）/ 開盤 >= paramLongBlack%
+    // 爆量：當週成交量 > 均量 × paramHeavyVol
+    // 高檔：當週收盤 > 週MA20（在均線之上才算高檔出貨）
+    if GetField("Open", "W")[i] <> 0 then
+        blackBody = (GetField("Open", "W")[i] - GetField("Close", "W")[i])
+                    / GetField("Open", "W")[i] * 100
+    else
+        blackBody = 0;
+
+    if blackBody >= paramLongBlack
+       and GetField("Volume", "W")[i] > volMaVal * paramHeavyVol
+       and GetField("Close", "W")[i] > Wma20 then
+        alertCount = alertCount + 1;
 end;
 
 // ── 布林輔助旗標 ─────────────────────────────────────────
@@ -157,4 +176,5 @@ then begin
     OutputField7(highestDev,    "期間最大正乖離(%)");
     OutputField8(volAbove,      "壓力量(週加總)");
     OutputField9(volBelow,      "支撐量(週加總)");
+    OutputField10(alertCount,   "高檔長黑爆量(次)");
 end;
