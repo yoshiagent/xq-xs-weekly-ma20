@@ -7,7 +7,9 @@
 //   3. 目前以量縮方式回測（修正非恐慌賣壓）
 //   4. 當前乖離率已收斂至週MA20附近
 // 版本日期：2026-05-08
-// 修正紀錄：使用 GetField("Close","W") 明確取週資料
+// 修正紀錄：
+//   v2 - 使用 GetField("Close","W") 明確取週資料
+//   v3 - 改用 xf_GetValue("W",Wma20,1) 取前一週MA20，消除警告
 // ============================================================
 
 // 確保足夠的歷史 K 棒長度（週K 20MA + 回看 26 週）
@@ -29,26 +31,22 @@ var: paramLookback(13);
 // 均量計算期數（週）
 var: paramVolMa(10);
 
-// ── 取週資料（明確指定 "W" 頻率）────────────────────────
-var: wClose(0), wVol(0);
+// ── 週資料（明確指定頻率）───────────────────────────────
+var: wClose(0), wVol(0), Wma20(0);
 
-wClose = GetField("Close", "W");      // 週收盤價
-wVol   = GetField("Volume", "W");     // 週成交量
+wClose = GetField("Close", "W");               // 週收盤價
+wVol   = GetField("Volume", "W");              // 週成交量
+Wma20  = Average(GetField("Close", "W"), 20);  // 週MA20
 
 // ── 計算核心變數 ─────────────────────────────────────────
-// 注意：ma20Now 為 var: 變數，ma20Now[1] 取前一期快取值是安全的。
-// 避免使用 Average(wClose,20)[1]（wClose 為變數時系統會警告）
-var: ma20Now(0);
 var: devNow(0);
 var: highestClose(0), highestDev(0);
 var: volMaVal(0), volRatioNow(0);
 
-// 週MA20（直接以 GetField 序列傳入，避免透過中間變數取 [1]）
-ma20Now = Average(GetField("Close", "W"), 20);
-
-// 當前收盤對週MA20 的乖離率（%）
-if ma20Now <> 0 then
-    devNow = (wClose - ma20Now) / ma20Now * 100
+// 當前日收盤對週MA20 的乖離率（%）
+// 用 GetField("Close","D") 取日收盤，與週MA20比較
+if Wma20 <> 0 then
+    devNow = (GetField("Close", "D") - Wma20) / Wma20 * 100
 else
     devNow = 0;
 
@@ -56,8 +54,8 @@ else
 highestClose = Highest(wClose, paramLookback);
 
 // 歷史最大正乖離率（%）
-if ma20Now <> 0 then
-    highestDev = (highestClose - ma20Now) / ma20Now * 100
+if Wma20 <> 0 then
+    highestDev = (highestClose - Wma20) / Wma20 * 100
 else
     highestDev = 0;
 
@@ -77,8 +75,8 @@ var: isNearMa(false);       // 當前已回到均線附近（乖離收斂）
 var: isVolShrink(false);    // 量縮確認
 
 // 條件一：週MA20 上揚
-// ma20Now[1] = 上一根週K棒的 MA20 快取值，var: 變數的歷史取值安全無警告
-if ma20Now > ma20Now[1] then
+// xf_GetValue("W", Wma20, 1) = 取前一根週K棒的 Wma20 值（官方正確寫法）
+if Wma20 > xf_GetValue("W", Wma20, 1) then
     isMaRising = true
 else
     isMaRising = false;
@@ -111,9 +109,9 @@ then begin
     ret = 1;
 
     // 九宮格輸出欄位
-    OutputField1(devNow,        "當前乖離率(%)");
-    OutputField2(highestDev,    "期間最大正乖離(%)");
-    OutputField3(volRatioNow,   "量/均量比值");
-    OutputField4(ma20Now,       "週MA20");
-    OutputField5(wClose,        "週收盤價");
+    OutputField1(devNow,                   "當前乖離率(%)");
+    OutputField2(highestDev,               "期間最大正乖離(%)");
+    OutputField3(volRatioNow,              "量/均量比值");
+    OutputField4(Wma20,                    "週MA20");
+    OutputField5(GetField("Close", "D"),   "日收盤價");
 end;
