@@ -330,6 +330,61 @@
     .c-number   { color: #fb923c; }
     .c-section  { color: #94a3b8; font-style: italic; }
 
+    /* Reading grid */
+    .reading-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 12px;
+    }
+
+    .reading-card {
+      background: #131f2e;
+      border: 1px solid #2d3f55;
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .reading-icon {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .reading-icon.support  { background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+    .reading-icon.bullish  { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+    .reading-icon.neutral  { background: rgba(251,146,60,0.15);  color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
+
+    .reading-body { flex: 1; }
+
+    .reading-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 3px;
+    }
+
+    .reading-field {
+      font-size: 11px;
+      color: #3b82f6;
+      font-family: "Courier New", monospace;
+      margin-bottom: 6px;
+    }
+
+    .reading-desc {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+
     /* Footer */
     footer {
       margin-top: 60px;
@@ -517,6 +572,69 @@
     </div>
     <div class="callout" style="margin-top:16px;">
       <strong>壓力 / 支撐量判讀：</strong>OutputField 8（壓力）= 當前價位之上各週成交量加總；OutputField 9（支撐）= 前低至當前價位之間各週成交量加總。支撐量 &gt; 壓力量，代表底部籌碼較紮實。
+    </div>
+  </section>
+
+  <!-- 判讀重點 -->
+  <section>
+    <h2>判讀重點</h2>
+
+    <div class="reading-grid">
+
+      <div class="reading-card">
+        <div class="reading-icon support">支</div>
+        <div class="reading-body">
+          <div class="reading-title">支撐量 &gt; 壓力量</div>
+          <div class="reading-field">OutputField 9 &gt; OutputField 8</div>
+          <div class="reading-desc">底部籌碼紮實，上方解套賣壓較輕。支撐與壓力的量體差距越大，反彈動能越充裕。</div>
+        </div>
+      </div>
+
+      <div class="reading-card">
+        <div class="reading-icon neutral">幅</div>
+        <div class="reading-body">
+          <div class="reading-title">峰谷落差 5 – 20%</div>
+          <div class="reading-field">OutputField 3</div>
+          <div class="reading-desc">此區間為正常洗盤幅度。落差 &lt; 5% 可能是假回測；落差 &gt; 25% 代表結構可能已遭破壞，需人工確認趨勢是否仍在。</div>
+        </div>
+      </div>
+
+      <div class="reading-card">
+        <div class="reading-icon bullish">底</div>
+        <div class="reading-body">
+          <div class="reading-title">谷底距今 0 – 1 週</div>
+          <div class="reading-field">OutputField 5</div>
+          <div class="reading-desc">本週或上週剛見谷底，代表股價可能正在 週MA20 附近獲得支撐並啟動，是最積極的介入時機點。</div>
+        </div>
+      </div>
+
+      <div class="reading-card">
+        <div class="reading-icon neutral">檔</div>
+        <div class="reading-body">
+          <div class="reading-title">近高回檔幅度</div>
+          <div class="reading-field">OutputField 2</div>
+          <div class="reading-desc">從近期最高週收盤回檔至今日的幅度。搭配「峰谷落差」可判斷目前是否已接近谷底，或仍在修正途中。</div>
+        </div>
+      </div>
+
+      <div class="reading-card">
+        <div class="reading-icon bullish">量</div>
+        <div class="reading-body">
+          <div class="reading-title">量 / 均量比值 &lt; 0.85</div>
+          <div class="reading-field">OutputField 6</div>
+          <div class="reading-desc">量縮代表回測期間無恐慌性賣壓，籌碼穩定換手。比值越低（如 0.5 以下），洗盤品質越好。</div>
+        </div>
+      </div>
+
+      <div class="reading-card">
+        <div class="reading-icon neutral">離</div>
+        <div class="reading-body">
+          <div class="reading-title">當前乖離率 ±3% 內</div>
+          <div class="reading-field">OutputField 1</div>
+          <div class="reading-desc">乖離率接近 0 代表股價貼近週MA20。若為正乖離（0 ~ +3%），均線仍在下方支撐；若為負乖離（-3% ~ 0），股價暫跌破均線，需確認下週能否收復。</div>
+        </div>
+      </div>
+
     </div>
   </section>
 
