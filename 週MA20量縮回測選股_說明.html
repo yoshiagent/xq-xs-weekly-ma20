@@ -531,14 +531,15 @@ wClose = <span class="c-func">GetField</span>(<span class="c-string">"Close"</sp
 wVol   = <span class="c-func">GetField</span>(<span class="c-string">"Volume"</span>, <span class="c-string">"W"</span>);     <span class="c-comment">// 週成交量</span>
 
 <span class="c-section">// ── 計算核心變數 ─────────────────────────────────────────</span>
-<span class="c-keyword">var</span>: ma20Now(<span class="c-number">0</span>), ma20Prev(<span class="c-number">0</span>);
+<span class="c-comment">// ma20Now 為 var: 變數，ma20Now[1] 取前一期快取值安全無警告</span>
+<span class="c-comment">// 避免 Average(wClose,20)[1]（wClose 為變數時系統會警告）</span>
+<span class="c-keyword">var</span>: ma20Now(<span class="c-number">0</span>);
 <span class="c-keyword">var</span>: devNow(<span class="c-number">0</span>);
 <span class="c-keyword">var</span>: highestClose(<span class="c-number">0</span>), highestDev(<span class="c-number">0</span>);
 <span class="c-keyword">var</span>: volMaVal(<span class="c-number">0</span>), volRatioNow(<span class="c-number">0</span>);
 
-<span class="c-comment">// 週MA20 本週與上週數值</span>
-ma20Now  = <span class="c-func">Average</span>(wClose, <span class="c-number">20</span>);
-ma20Prev = <span class="c-func">Average</span>(wClose, <span class="c-number">20</span>)[<span class="c-number">1</span>];    <span class="c-comment">// [1] 代表前一根週K棒</span>
+<span class="c-comment">// 週MA20（直接以 GetField 序列傳入，避免透過中間變數取 [1]）</span>
+ma20Now = <span class="c-func">Average</span>(<span class="c-func">GetField</span>(<span class="c-string">"Close"</span>, <span class="c-string">"W"</span>), <span class="c-number">20</span>);
 
 <span class="c-comment">// 當前收盤對週MA20 的乖離率（%）</span>
 <span class="c-keyword">if</span> ma20Now &lt;&gt; <span class="c-number">0</span> <span class="c-keyword">then</span>
@@ -571,7 +572,8 @@ volMaVal = <span class="c-func">Average</span>(wVol, paramVolMa);
 <span class="c-keyword">var</span>: isVolShrink(<span class="c-keyword">false</span>);    <span class="c-comment">// 量縮確認</span>
 
 <span class="c-comment">// 條件一：週MA20 上揚</span>
-<span class="c-keyword">if</span> ma20Now &gt; ma20Prev <span class="c-keyword">then</span>
+<span class="c-comment">// 用 ma20Now[1] 取前一期 var: 變數快取，安全無警告</span>
+<span class="c-keyword">if</span> ma20Now &gt; ma20Now[<span class="c-number">1</span>] <span class="c-keyword">then</span>
     isMaRising = <span class="c-keyword">true</span>
 <span class="c-keyword">else</span>
     isMaRising = <span class="c-keyword">false</span>;

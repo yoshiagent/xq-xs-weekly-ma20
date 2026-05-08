@@ -36,14 +36,15 @@ wClose = GetField("Close", "W");      // 週收盤價
 wVol   = GetField("Volume", "W");     // 週成交量
 
 // ── 計算核心變數 ─────────────────────────────────────────
-var: ma20Now(0), ma20Prev(0);
+// 注意：ma20Now 為 var: 變數，ma20Now[1] 取前一期快取值是安全的。
+// 避免使用 Average(wClose,20)[1]（wClose 為變數時系統會警告）
+var: ma20Now(0);
 var: devNow(0);
 var: highestClose(0), highestDev(0);
 var: volMaVal(0), volRatioNow(0);
 
-// 週MA20 本週與上週數值
-ma20Now  = Average(wClose, 20);
-ma20Prev = Average(wClose, 20)[1];    // [1] 代表前一根週K棒
+// 週MA20（直接以 GetField 序列傳入，避免透過中間變數取 [1]）
+ma20Now = Average(GetField("Close", "W"), 20);
 
 // 當前收盤對週MA20 的乖離率（%）
 if ma20Now <> 0 then
@@ -76,7 +77,8 @@ var: isNearMa(false);       // 當前已回到均線附近（乖離收斂）
 var: isVolShrink(false);    // 量縮確認
 
 // 條件一：週MA20 上揚
-if ma20Now > ma20Prev then
+// ma20Now[1] = 上一根週K棒的 MA20 快取值，var: 變數的歷史取值安全無警告
+if ma20Now > ma20Now[1] then
     isMaRising = true
 else
     isMaRising = false;
