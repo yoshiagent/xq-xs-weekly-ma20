@@ -156,9 +156,11 @@ else
     isVolShrink = false;
 
 // ── 選股觸發 ─────────────────────────────────────────────
-// 暫時最寬鬆版：只要近期有高點（非本週）且已開始回檔即選出
-if peakBar >= 1
+// 條件：週MA20上揚 + 開始回檔 + 股價 >= 50
+if isMaRising = true
+   and peakBar >= 1
    and pullbackPct > 0
+   and curPrice >= 50
 then begin
     ret = 1;
 
