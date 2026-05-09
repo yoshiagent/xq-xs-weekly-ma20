@@ -28,7 +28,7 @@ input: paramLookback(13);     // 回看週數
 input: paramVolMa(10);        // 均量計算期數
 input: paramPeakDelay(2);     // 峰值需在幾週前以上才確認回測啟動
 input: paramLongBlack(3.0);   // 長黑實體門檻（%）：開盤 vs 收盤跌幅超過此值視為長黑
-input: paramHeavyVol(1.5);    // 爆量倍數門檻：成交量 > 均量 × 此倍數視為爆量
+input: paramHeavyVol(2.0);    // 爆量倍數門檻：成交量 > 均量 × 此倍數視為爆量
 input: paramAnglePeriod(4);   // 線性迴歸角度計算期數（週）
 
 // ── 週資料（明確指定頻率）───────────────────────────────
