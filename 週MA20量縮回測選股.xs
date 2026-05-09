@@ -129,6 +129,7 @@ if ma20Angle > 0
    and peakBar >= 1
    and pullbackPct > 0
    and curPrice >= 50
+   and devNow <= paramDevNear and devNow >= (-1 * paramDevNear)
 then begin
     ret = 1;
 
