@@ -21,15 +21,15 @@
 SetTotalBar(260);
 
 // ── 參數設定 ────────────────────────────────────────────
-var: paramDevHigh(8.0);     // 正乖離觸發門檻（%）
-var: paramDevNear(3.0);     // 回測完成門檻（%）
-var: paramVolRatio(0.85);   // 量縮比例閾值
-var: paramLookback(13);     // 回看週數
-var: paramVolMa(10);        // 均量計算期數
-var: paramPeakDelay(2);     // 峰值需在幾週前以上才確認回測啟動
-var: paramLongBlack(3.0);   // 長黑實體門檻（%）：開盤 vs 收盤跌幅超過此值視為長黑
-var: paramHeavyVol(1.5);    // 爆量倍數門檻：成交量 > 均量 × 此倍數視為爆量
-var: paramAnglePeriod(4);   // 線性迴歸角度計算期數（週）
+input: paramDevHigh(8.0);     // 正乖離觸發門檻（%）
+input: paramDevNear(3.0);     // 回測完成門檻（%）
+input: paramVolRatio(0.85);   // 量縮比例閾值
+input: paramLookback(13);     // 回看週數
+input: paramVolMa(10);        // 均量計算期數
+input: paramPeakDelay(2);     // 峰值需在幾週前以上才確認回測啟動
+input: paramLongBlack(3.0);   // 長黑實體門檻（%）：開盤 vs 收盤跌幅超過此值視為長黑
+input: paramHeavyVol(1.5);    // 爆量倍數門檻：成交量 > 均量 × 此倍數視為爆量
+input: paramAnglePeriod(4);   // 線性迴歸角度計算期數（週）
 
 // ── 週資料（明確指定頻率）───────────────────────────────
 var: wClose(0), wVol(0), Wma20(0);
