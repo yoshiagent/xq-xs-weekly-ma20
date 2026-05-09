@@ -126,6 +126,7 @@ if blackBody >= paramLongBlack
 // ── 選股觸發 ─────────────────────────────────────────────
 // 條件：週MA20迴歸角度向上 + 開始回檔 + 股價 >= 50
 if ma20Angle > 0
+   and highestDev >= paramDevHigh
    and peakBar >= 1
    and pullbackPct > 0
    and curPrice >= 50
