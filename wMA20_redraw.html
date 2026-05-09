@@ -61,8 +61,40 @@
     .code { font-size: 11px; color: #64748b; font-family: monospace; }
     .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .sector { color: #94a3b8; font-size: 12px; }
-    .stock-link { text-decoration: none; display: block; }
-    .stock-link:hover .name { color: #60a5fa; text-decoration: underline; }
+    .stock-cell { cursor: pointer; }
+    .stock-cell:hover .name { color: #60a5fa; text-decoration: underline; }
+    /* ── Modal ── */
+    #tvOverlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.88); z-index: 9000;
+      align-items: center; justify-content: center;
+    }
+    #tvOverlay.open { display: flex; }
+    #tvBox {
+      position: relative;
+      width: min(1200px, 96vw);
+      height: min(700px, 90vh);
+      border: 1px solid #2d3f55;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #131a2e;
+      display: flex; flex-direction: column;
+    }
+    #tvHeader {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; background: #0f2040;
+      border-bottom: 1px solid #2d3f55; flex-shrink: 0;
+    }
+    #tvTitle { font-size: 14px; font-weight: 600; color: #e2e8f0; }
+    #tvSubtitle { font-size: 11px; color: #64748b; margin-top: 2px; }
+    #tvClose {
+      background: none; border: 1px solid #2d3f55; color: #94a3b8;
+      width: 28px; height: 28px; border-radius: 6px;
+      cursor: pointer; font-size: 16px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #tvClose:hover { color: #e2e8f0; border-color: #64748b; }
+    #tvWidget { flex: 1; }
     .badge {
       display: inline-block;
       font-size: 11px;
@@ -122,7 +154,7 @@
       </thead>
       <tbody>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:1519&interval=W" target="_blank" rel="noopener"><strong class="name">華城</strong><br><span class="code">1519.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('1519.TW','華城')" title="點擊查看週線圖"><strong class="name">華城</strong><br><span class="code">1519.TW</span></td>
       <td class="num">896</td>
       <td class="num" style="color:#34d399">0.56%</td>
       <td class="num" style="color:#e2e8f0">0.85%</td>
@@ -138,7 +170,7 @@
       <td class="sector">變電設備</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:8069&interval=W" target="_blank" rel="noopener"><strong class="name">元太</strong><br><span class="code">8069.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('8069.TW','元太')" title="點擊查看週線圖"><strong class="name">元太</strong><br><span class="code">8069.TW</span></td>
       <td class="num">162</td>
       <td class="num" style="color:#34d399">5.88%</td>
       <td class="num" style="color:#f87171">-2.47%</td>
@@ -154,7 +186,7 @@
       <td class="sector">電子紙</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:1504&interval=W" target="_blank" rel="noopener"><strong class="name">東元</strong><br><span class="code">1504.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('1504.TW','東元')" title="點擊查看週線圖"><strong class="name">東元</strong><br><span class="code">1504.TW</span></td>
       <td class="num">72.8</td>
       <td class="num" style="color:#f87171">-1.62%</td>
       <td class="num" style="color:#f87171">-2.54%</td>
@@ -170,7 +202,7 @@
       <td class="sector">電機</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:1503&interval=W" target="_blank" rel="noopener"><strong class="name">士電</strong><br><span class="code">1503.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('1503.TW','士電')" title="點擊查看週線圖"><strong class="name">士電</strong><br><span class="code">1503.TW</span></td>
       <td class="num">202.5</td>
       <td class="num" style="color:#34d399">1.5%</td>
       <td class="num" style="color:#34d399">2.58%</td>
@@ -186,7 +218,7 @@
       <td class="sector">電機</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:1513&interval=W" target="_blank" rel="noopener"><strong class="name">中興電</strong><br><span class="code">1513.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('1513.TW','中興電')" title="點擊查看週線圖"><strong class="name">中興電</strong><br><span class="code">1513.TW</span></td>
       <td class="num">158</td>
       <td class="num" style="color:#34d399">0.96%</td>
       <td class="num" style="color:#e2e8f0">0.72%</td>
@@ -202,7 +234,7 @@
       <td class="sector">電機</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:4772&interval=W" target="_blank" rel="noopener"><strong class="name">台特化</strong><br><span class="code">4772.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('4772.TW','台特化')" title="點擊查看週線圖"><strong class="name">台特化</strong><br><span class="code">4772.TW</span></td>
       <td class="num">321.5</td>
       <td class="num" style="color:#34d399">4.38%</td>
       <td class="num" style="color:#34d399">1.24%</td>
@@ -218,7 +250,7 @@
       <td class="sector">工業氣體</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:2634&interval=W" target="_blank" rel="noopener"><strong class="name">漢翔</strong><br><span class="code">2634.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('2634.TW','漢翔')" title="點擊查看週線圖"><strong class="name">漢翔</strong><br><span class="code">2634.TW</span></td>
       <td class="num">50.1</td>
       <td class="num" style="color:#34d399">1.21%</td>
       <td class="num" style="color:#f87171">-2.24%</td>
@@ -234,7 +266,7 @@
       <td class="sector">飛機零件／製造</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:3376&interval=W" target="_blank" rel="noopener"><strong class="name">新日興</strong><br><span class="code">3376.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('3376.TW','新日興')" title="點擊查看週線圖"><strong class="name">新日興</strong><br><span class="code">3376.TW</span></td>
       <td class="num">202.5</td>
       <td class="num" style="color:#f87171">-5.81%</td>
       <td class="num" style="color:#f87171">-1.93%</td>
@@ -250,7 +282,7 @@
       <td class="sector">樞紐</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:3596&interval=W" target="_blank" rel="noopener"><strong class="name">智易</strong><br><span class="code">3596.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('3596.TW','智易')" title="點擊查看週線圖"><strong class="name">智易</strong><br><span class="code">3596.TW</span></td>
       <td class="num">178</td>
       <td class="num" style="color:#34d399">6.27%</td>
       <td class="num" style="color:#e2e8f0">-0.86%</td>
@@ -266,7 +298,7 @@
       <td class="sector">無線網路設備系統(WLAN)</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:2015&interval=W" target="_blank" rel="noopener"><strong class="name">豐興</strong><br><span class="code">2015.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('2015.TW','豐興')" title="點擊查看週線圖"><strong class="name">豐興</strong><br><span class="code">2015.TW</span></td>
       <td class="num">62.5</td>
       <td class="num" style="color:#94a3b8">0%</td>
       <td class="num" style="color:#f87171">-2.28%</td>
@@ -282,7 +314,7 @@
       <td class="sector">鋼筋</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:6561&interval=W" target="_blank" rel="noopener"><strong class="name">是方</strong><br><span class="code">6561.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('6561.TW','是方')" title="點擊查看週線圖"><strong class="name">是方</strong><br><span class="code">6561.TW</span></td>
       <td class="num">345</td>
       <td class="num" style="color:#34d399">3.14%</td>
       <td class="num" style="color:#f87171">-1.85%</td>
@@ -298,7 +330,7 @@
       <td class="sector">電信／數據服務</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:6757&interval=W" target="_blank" rel="noopener"><strong class="name">台灣虎航</strong><br><span class="code">6757.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('6757.TW','台灣虎航')" title="點擊查看週線圖"><strong class="name">台灣虎航</strong><br><span class="code">6757.TW</span></td>
       <td class="num">57</td>
       <td class="num" style="color:#34d399">3.26%</td>
       <td class="num" style="color:#f87171">-2.89%</td>
@@ -314,7 +346,7 @@
       <td class="sector">空運</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:9911&interval=W" target="_blank" rel="noopener"><strong class="name">櫻花</strong><br><span class="code">9911.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('9911.TW','櫻花')" title="點擊查看週線圖"><strong class="name">櫻花</strong><br><span class="code">9911.TW</span></td>
       <td class="num">83.2</td>
       <td class="num" style="color:#f87171">-0.48%</td>
       <td class="num" style="color:#f87171">-2.43%</td>
@@ -330,7 +362,7 @@
       <td class="sector">廚衛電</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:9937&interval=W" target="_blank" rel="noopener"><strong class="name">全國</strong><br><span class="code">9937.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('9937.TW','全國')" title="點擊查看週線圖"><strong class="name">全國</strong><br><span class="code">9937.TW</span></td>
       <td class="num">57.1</td>
       <td class="num" style="color:#34d399">0.53%</td>
       <td class="num" style="color:#e2e8f0">-0.44%</td>
@@ -346,7 +378,7 @@
       <td class="sector">加油站</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:6284&interval=W" target="_blank" rel="noopener"><strong class="name">佳邦</strong><br><span class="code">6284.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('6284.TW','佳邦')" title="點擊查看週線圖"><strong class="name">佳邦</strong><br><span class="code">6284.TW</span></td>
       <td class="num">81.5</td>
       <td class="num" style="color:#34d399">0.62%</td>
       <td class="num" style="color:#f87171">-1.28%</td>
@@ -362,7 +394,7 @@
       <td class="sector">天線</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:2612&interval=W" target="_blank" rel="noopener"><strong class="name">中航</strong><br><span class="code">2612.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('2612.TW','中航')" title="點擊查看週線圖"><strong class="name">中航</strong><br><span class="code">2612.TW</span></td>
       <td class="num">57.9</td>
       <td class="num" style="color:#f87171">-1.19%</td>
       <td class="num" style="color:#f87171">-1.66%</td>
@@ -378,7 +410,7 @@
       <td class="sector">散裝航運</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:4771&interval=W" target="_blank" rel="noopener"><strong class="name">望隼</strong><br><span class="code">4771.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('4771.TW','望隼')" title="點擊查看週線圖"><strong class="name">望隼</strong><br><span class="code">4771.TW</span></td>
       <td class="num">187.5</td>
       <td class="num" style="color:#f87171">-2.09%</td>
       <td class="num" style="color:#34d399">2.92%</td>
@@ -394,7 +426,7 @@
       <td class="sector">隱形眼鏡</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:2630&interval=W" target="_blank" rel="noopener"><strong class="name">亞航</strong><br><span class="code">2630.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('2630.TW','亞航')" title="點擊查看週線圖"><strong class="name">亞航</strong><br><span class="code">2630.TW</span></td>
       <td class="num">50.4</td>
       <td class="num" style="color:#34d399">1.31%</td>
       <td class="num" style="color:#e2e8f0">0.07%</td>
@@ -410,7 +442,7 @@
       <td class="sector">飛機維修</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:8390&interval=W" target="_blank" rel="noopener"><strong class="name">金益鼎</strong><br><span class="code">8390.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('8390.TW','金益鼎')" title="點擊查看週線圖"><strong class="name">金益鼎</strong><br><span class="code">8390.TW</span></td>
       <td class="num">94.1</td>
       <td class="num" style="color:#f87171">-0.32%</td>
       <td class="num" style="color:#e2e8f0">0.16%</td>
@@ -426,7 +458,7 @@
       <td class="sector">回收焚化／掩埋清運</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:4137&interval=W" target="_blank" rel="noopener"><strong class="name">麗豐-KY</strong><br><span class="code">4137.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('4137.TW','麗豐-KY')" title="點擊查看週線圖"><strong class="name">麗豐-KY</strong><br><span class="code">4137.TW</span></td>
       <td class="num">107.5</td>
       <td class="num" style="color:#94a3b8">0%</td>
       <td class="num" style="color:#34d399">1.3%</td>
@@ -442,7 +474,7 @@
       <td class="sector">美容</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:5511&interval=W" target="_blank" rel="noopener"><strong class="name">德昌</strong><br><span class="code">5511.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('5511.TW','德昌')" title="點擊查看週線圖"><strong class="name">德昌</strong><br><span class="code">5511.TW</span></td>
       <td class="num">70.8</td>
       <td class="num" style="color:#f87171">-0.28%</td>
       <td class="num" style="color:#34d399">2.18%</td>
@@ -458,7 +490,7 @@
       <td class="sector">住宅建設</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:6732&interval=W" target="_blank" rel="noopener"><strong class="name">昇佳電子</strong><br><span class="code">6732.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('6732.TW','昇佳電子')" title="點擊查看週線圖"><strong class="name">昇佳電子</strong><br><span class="code">6732.TW</span></td>
       <td class="num">164</td>
       <td class="num" style="color:#34d399">0.31%</td>
       <td class="num" style="color:#f87171">-1.49%</td>
@@ -474,7 +506,7 @@
       <td class="sector">感測元件</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:5263&interval=W" target="_blank" rel="noopener"><strong class="name">智崴</strong><br><span class="code">5263.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('5263.TW','智崴')" title="點擊查看週線圖"><strong class="name">智崴</strong><br><span class="code">5263.TW</span></td>
       <td class="num">103.5</td>
       <td class="num" style="color:#f87171">-0.48%</td>
       <td class="num" style="color:#34d399">2.04%</td>
@@ -490,7 +522,7 @@
       <td class="sector">商用遊戲機</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:1342&interval=W" target="_blank" rel="noopener"><strong class="name">八貫</strong><br><span class="code">1342.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('1342.TW','八貫')" title="點擊查看週線圖"><strong class="name">八貫</strong><br><span class="code">1342.TW</span></td>
       <td class="num">94.2</td>
       <td class="num" style="color:#f87171">-1.46%</td>
       <td class="num" style="color:#34d399">2.03%</td>
@@ -506,7 +538,7 @@
       <td class="sector">塑膠皮布</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:3032&interval=W" target="_blank" rel="noopener"><strong class="name">偉訓</strong><br><span class="code">3032.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('3032.TW','偉訓')" title="點擊查看週線圖"><strong class="name">偉訓</strong><br><span class="code">3032.TW</span></td>
       <td class="num">70.7</td>
       <td class="num" style="color:#f87171">-1.39%</td>
       <td class="num" style="color:#34d399">1.32%</td>
@@ -522,7 +554,7 @@
       <td class="sector">機殼</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:4994&interval=W" target="_blank" rel="noopener"><strong class="name">傳奇</strong><br><span class="code">4994.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('4994.TW','傳奇')" title="點擊查看週線圖"><strong class="name">傳奇</strong><br><span class="code">4994.TW</span></td>
       <td class="num">97.9</td>
       <td class="num" style="color:#f87171">-0.61%</td>
       <td class="num" style="color:#e2e8f0">-1%</td>
@@ -538,7 +570,7 @@
       <td class="sector">PC遊戲</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:8482&interval=W" target="_blank" rel="noopener"><strong class="name">商億-KY</strong><br><span class="code">8482.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('8482.TW','商億-KY')" title="點擊查看週線圖"><strong class="name">商億-KY</strong><br><span class="code">8482.TW</span></td>
       <td class="num">50</td>
       <td class="num" style="color:#94a3b8">0%</td>
       <td class="num" style="color:#e2e8f0">0.96%</td>
@@ -554,7 +586,7 @@
       <td class="sector">傢俱</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:6776&interval=W" target="_blank" rel="noopener"><strong class="name">展碁國際</strong><br><span class="code">6776.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('6776.TW','展碁國際')" title="點擊查看週線圖"><strong class="name">展碁國際</strong><br><span class="code">6776.TW</span></td>
       <td class="num">58.3</td>
       <td class="num" style="color:#34d399">0.87%</td>
       <td class="num" style="color:#e2e8f0">0.8%</td>
@@ -570,7 +602,7 @@
       <td class="sector">電腦通路商</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:1472&interval=W" target="_blank" rel="noopener"><strong class="name">三洋實業</strong><br><span class="code">1472.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('1472.TW','三洋實業')" title="點擊查看週線圖"><strong class="name">三洋實業</strong><br><span class="code">1472.TW</span></td>
       <td class="num">91.2</td>
       <td class="num" style="color:#f87171">-0.11%</td>
       <td class="num" style="color:#e2e8f0">-0.23%</td>
@@ -586,7 +618,7 @@
       <td class="sector">基礎建設</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:6492&interval=W" target="_blank" rel="noopener"><strong class="name">生華科</strong><br><span class="code">6492.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('6492.TW','生華科')" title="點擊查看週線圖"><strong class="name">生華科</strong><br><span class="code">6492.TW</span></td>
       <td class="num">51.4</td>
       <td class="num" style="color:#f87171">-1.15%</td>
       <td class="num" style="color:#34d399">2.19%</td>
@@ -602,7 +634,7 @@
       <td class="sector">新藥研發</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:6629&interval=W" target="_blank" rel="noopener"><strong class="name">泰金-KY</strong><br><span class="code">6629.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('6629.TW','泰金-KY')" title="點擊查看週線圖"><strong class="name">泰金-KY</strong><br><span class="code">6629.TW</span></td>
       <td class="num">119</td>
       <td class="num" style="color:#94a3b8">0%</td>
       <td class="num" style="color:#34d399">1.3%</td>
@@ -618,7 +650,7 @@
       <td class="sector">金屬加工／製品</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:4737&interval=W" target="_blank" rel="noopener"><strong class="name">華廣</strong><br><span class="code">4737.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('4737.TW','華廣')" title="點擊查看週線圖"><strong class="name">華廣</strong><br><span class="code">4737.TW</span></td>
       <td class="num">58.8</td>
       <td class="num" style="color:#34d399">0.51%</td>
       <td class="num" style="color:#f87171">-1.52%</td>
@@ -634,7 +666,7 @@
       <td class="sector">血糖儀</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:5706&interval=W" target="_blank" rel="noopener"><strong class="name">鳳凰</strong><br><span class="code">5706.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('5706.TW','鳳凰')" title="點擊查看週線圖"><strong class="name">鳳凰</strong><br><span class="code">5706.TW</span></td>
       <td class="num">51.4</td>
       <td class="num" style="color:#f87171">-0.96%</td>
       <td class="num" style="color:#e2e8f0">0.82%</td>
@@ -650,7 +682,7 @@
       <td class="sector">旅行社</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:6794&interval=W" target="_blank" rel="noopener"><strong class="name">向榮生技</strong><br><span class="code">6794.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('6794.TW','向榮生技')" title="點擊查看週線圖"><strong class="name">向榮生技</strong><br><span class="code">6794.TW</span></td>
       <td class="num">83.3</td>
       <td class="num" style="color:#34d399">0.24%</td>
       <td class="num" style="color:#e2e8f0">-0.97%</td>
@@ -666,7 +698,7 @@
       <td class="sector">新藥研發</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:8088&interval=W" target="_blank" rel="noopener"><strong class="name">品安</strong><br><span class="code">8088.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('8088.TW','品安')" title="點擊查看週線圖"><strong class="name">品安</strong><br><span class="code">8088.TW</span></td>
       <td class="num">54</td>
       <td class="num" style="color:#f87171">-2%</td>
       <td class="num" style="color:#34d399">2.54%</td>
@@ -682,7 +714,7 @@
       <td class="sector">記憶體模組</td>
     </tr>
     <tr>
-      <td><a class="stock-link" href="https://www.tradingview.com/chart/?symbol=TWSE:3570&interval=W" target="_blank" rel="noopener"><strong class="name">大塚</strong><br><span class="code">3570.TW</span></a></td>
+      <td class="stock-cell" onclick="openChart('3570.TW','大塚')" title="點擊查看週線圖"><strong class="name">大塚</strong><br><span class="code">3570.TW</span></td>
       <td class="num">166.5</td>
       <td class="num" style="color:#34d399">1.22%</td>
       <td class="num" style="color:#f87171">-1.89%</td>
@@ -706,6 +738,64 @@
   </footer>
 
 </div>
+
+<!-- TradingView Modal -->
+<div id="tvOverlay" onclick="handleOverlayClick(event)">
+  <div id="tvBox">
+    <div id="tvHeader">
+      <div>
+        <div id="tvTitle">—</div>
+        <div id="tvSubtitle">週K線 · MA20</div>
+      </div>
+      <button id="tvClose" onclick="closeChart()">✕</button>
+    </div>
+    <div id="tvWidget"></div>
+  </div>
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+  let tvWidget = null;
+
+  function openChart(code, name) {
+    const ticker = code.replace('.TW', '');
+    document.getElementById('tvTitle').textContent = name + '　' + code;
+    document.getElementById('tvOverlay').classList.add('open');
+    document.getElementById('tvWidget').innerHTML = '';
+    tvWidget = new TradingView.widget({
+      container_id: 'tvWidget',
+      symbol: 'TWSE:' + ticker,
+      interval: 'W',
+      theme: 'dark',
+      style: '1',
+      locale: 'zh_TW',
+      width: '100%',
+      height: '100%',
+      hide_top_toolbar: false,
+      hide_legend: false,
+      allow_symbol_change: true,
+      studies: ['MASimple@tv-basicstudies'],
+      studies_overrides: {
+        'moving average.length': 20,
+        'moving average.source': 'close',
+        'moving average.plot.color': '#fb923c',
+        'moving average.plot.linewidth': 2
+      }
+    });
+  }
+
+  function closeChart() {
+    document.getElementById('tvOverlay').classList.remove('open');
+    document.getElementById('tvWidget').innerHTML = '';
+    tvWidget = null;
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('tvOverlay')) closeChart();
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeChart(); });
+</script>
 <script>
   let sortCol = -1, sortDir = 1;
   function getVal(td) {

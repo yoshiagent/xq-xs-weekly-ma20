@@ -46,11 +46,6 @@ def alert_badge(v):
     except:
         return v
 
-def tv_url(code):
-    # code 格式 "2330.TW" → TWSE:2330，週線
-    ticker = code.replace('.TW', '')
-    return f'https://www.tradingview.com/chart/?symbol=TWSE:{ticker}&interval=W'
-
 def tr_row(r):
     code    = r[1]
     name    = r[2]
@@ -83,7 +78,7 @@ def tr_row(r):
 
     return (
         f'    <tr>\n'
-        f'      <td><a class="stock-link" href="{tv_url(code)}" target="_blank" rel="noopener"><strong class="name">{name}</strong><br><span class="code">{code}</span></a></td>\n'
+        f'      <td class="stock-cell" onclick="openChart(\'{code}\',\'{name}\')" title="點擊查看週線圖"><strong class="name">{name}</strong><br><span class="code">{code}</span></td>\n'
         f'      <td class="num">{price}</td>\n'
         f'      <td class="num" style="color:{chg_c}">{chg}%</td>\n'
         f'      <td class="num" style="color:{dev_c}">{dev}%</td>\n'
@@ -165,8 +160,40 @@ html = '''<!DOCTYPE html>
     .code { font-size: 11px; color: #64748b; font-family: monospace; }
     .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .sector { color: #94a3b8; font-size: 12px; }
-    .stock-link { text-decoration: none; display: block; }
-    .stock-link:hover .name { color: #60a5fa; text-decoration: underline; }
+    .stock-cell { cursor: pointer; }
+    .stock-cell:hover .name { color: #60a5fa; text-decoration: underline; }
+    /* ── Modal ── */
+    #tvOverlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.88); z-index: 9000;
+      align-items: center; justify-content: center;
+    }
+    #tvOverlay.open { display: flex; }
+    #tvBox {
+      position: relative;
+      width: min(1200px, 96vw);
+      height: min(700px, 90vh);
+      border: 1px solid #2d3f55;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #131a2e;
+      display: flex; flex-direction: column;
+    }
+    #tvHeader {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; background: #0f2040;
+      border-bottom: 1px solid #2d3f55; flex-shrink: 0;
+    }
+    #tvTitle { font-size: 14px; font-weight: 600; color: #e2e8f0; }
+    #tvSubtitle { font-size: 11px; color: #64748b; margin-top: 2px; }
+    #tvClose {
+      background: none; border: 1px solid #2d3f55; color: #94a3b8;
+      width: 28px; height: 28px; border-radius: 6px;
+      cursor: pointer; font-size: 16px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #tvClose:hover { color: #e2e8f0; border-color: #64748b; }
+    #tvWidget { flex: 1; }
     .badge {
       display: inline-block;
       font-size: 11px;
@@ -235,6 +262,64 @@ html = '''<!DOCTYPE html>
   </footer>
 
 </div>
+
+<!-- TradingView Modal -->
+<div id="tvOverlay" onclick="handleOverlayClick(event)">
+  <div id="tvBox">
+    <div id="tvHeader">
+      <div>
+        <div id="tvTitle">—</div>
+        <div id="tvSubtitle">週K線 · MA20</div>
+      </div>
+      <button id="tvClose" onclick="closeChart()">✕</button>
+    </div>
+    <div id="tvWidget"></div>
+  </div>
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+  let tvWidget = null;
+
+  function openChart(code, name) {
+    const ticker = code.replace('.TW', '');
+    document.getElementById('tvTitle').textContent = name + '　' + code;
+    document.getElementById('tvOverlay').classList.add('open');
+    document.getElementById('tvWidget').innerHTML = '';
+    tvWidget = new TradingView.widget({
+      container_id: 'tvWidget',
+      symbol: 'TWSE:' + ticker,
+      interval: 'W',
+      theme: 'dark',
+      style: '1',
+      locale: 'zh_TW',
+      width: '100%',
+      height: '100%',
+      hide_top_toolbar: false,
+      hide_legend: false,
+      allow_symbol_change: true,
+      studies: ['MASimple@tv-basicstudies'],
+      studies_overrides: {
+        'moving average.length': 20,
+        'moving average.source': 'close',
+        'moving average.plot.color': '#fb923c',
+        'moving average.plot.linewidth': 2
+      }
+    });
+  }
+
+  function closeChart() {
+    document.getElementById('tvOverlay').classList.remove('open');
+    document.getElementById('tvWidget').innerHTML = '';
+    tvWidget = null;
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('tvOverlay')) closeChart();
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeChart(); });
+</script>
 <script>
   let sortCol = -1, sortDir = 1;
   function getVal(td) {
