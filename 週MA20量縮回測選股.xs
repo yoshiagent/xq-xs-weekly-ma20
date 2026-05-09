@@ -72,10 +72,12 @@ if highestHigh <> 0 then
 else
     peakToTrough = 0;
 
-// 週均量與量縮比值
+// 週均量（供高檔爆量警訊使用）
 volMaVal = Average(wVol, paramVolMa);
-if volMaVal <> 0 then
-    volRatioNow = wVol / volMaVal
+
+// 量縮比值：當週量 / 峰值週量（< paramVolRatio 代表量縮）
+if GetField("Volume", "W")[peakBar] <> 0 then
+    volRatioNow = wVol / GetField("Volume", "W")[peakBar]
 else
     volRatioNow = 1;
 
@@ -142,7 +144,7 @@ then begin
     OutputField4(peakToTrough,  "峰谷落差(%)");
     OutputField5(peakBar,       "峰值距今(週)");
     OutputField6(troughBar,     "谷底距今(週)");
-    OutputField7(volRatioNow,   "量/均量比值");
+    OutputField7(volRatioNow,   "量/峰值量比值");
     OutputField8(ma20Angle,     "MA20迴歸角度");
     OutputField9(volAbove,      "壓力量(週加總)");
     OutputField10(volBelow,     "支撐量(週加總)");
