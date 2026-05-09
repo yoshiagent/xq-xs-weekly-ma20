@@ -131,6 +131,7 @@ if ma20Angle > 0
    and pullbackPct > 0
    and curPrice >= 50
    and devNow <= paramDevNear and devNow >= (-1 * paramDevNear)
+   and volRatioNow < paramVolRatio
 then begin
     ret = 1;
 
