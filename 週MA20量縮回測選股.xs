@@ -136,8 +136,8 @@ then begin
 
     // 九宮格輸出欄位
     OutputField1(devNow,        "當前乖離率(%)");
-    OutputField2(pullbackPct,   "近高回檔幅度(%)");
-    OutputField3(highestDev,    "期間最大正乖離(%)");
+    OutputField2(highestDev,    "期間最大正乖離(%)");
+    OutputField3(pullbackPct,   "近高回檔幅度(%)");
     OutputField4(peakToTrough,  "峰谷落差(%)");
     OutputField5(peakBar,       "峰值距今(週)");
     OutputField6(troughBar,     "谷底距今(週)");
