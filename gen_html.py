@@ -46,6 +46,11 @@ def alert_badge(v):
     except:
         return v
 
+def tv_url(code):
+    # code 格式 "2330.TW" → TWSE:2330，週線
+    ticker = code.replace('.TW', '')
+    return f'https://www.tradingview.com/chart/?symbol=TWSE:{ticker}&interval=W'
+
 def tr_row(r):
     code    = r[1]
     name    = r[2]
@@ -78,7 +83,7 @@ def tr_row(r):
 
     return (
         f'    <tr>\n'
-        f'      <td><strong class="name">{name}</strong><br><span class="code">{code}</span></td>\n'
+        f'      <td><a class="stock-link" href="{tv_url(code)}" target="_blank" rel="noopener"><strong class="name">{name}</strong><br><span class="code">{code}</span></a></td>\n'
         f'      <td class="num">{price}</td>\n'
         f'      <td class="num" style="color:{chg_c}">{chg}%</td>\n'
         f'      <td class="num" style="color:{dev_c}">{dev}%</td>\n'
@@ -160,6 +165,8 @@ html = '''<!DOCTYPE html>
     .code { font-size: 11px; color: #64748b; font-family: monospace; }
     .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .sector { color: #94a3b8; font-size: 12px; }
+    .stock-link { text-decoration: none; display: block; }
+    .stock-link:hover .name { color: #60a5fa; text-decoration: underline; }
     .badge {
       display: inline-block;
       font-size: 11px;
