@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>週MA20量縮回測選股 — 2026年  5月  8日</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #080e18;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+      padding: 32px 16px 60px;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    header { margin-bottom: 24px; border-bottom: 1px solid #2d3f55; padding-bottom: 20px; }
+    .tag {
+      display: inline-block;
+      background: #0f2040;
+      border: 1px solid rgba(59,130,246,0.3);
+      color: #93c5fd;
+      font-size: 11px;
+      padding: 2px 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      letter-spacing: 0.05em;
+    }
+    h1 { font-size: 22px; font-weight: 700; color: #e2e8f0; margin-bottom: 6px; }
+    .meta { color: #94a3b8; font-size: 13px; }
+    .count { color: #3b82f6; font-weight: 700; }
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid #2d3f55;
+      border-radius: 10px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead { background: #0f2040; position: sticky; top: 0; z-index: 1; }
+    th {
+      padding: 10px 12px;
+      text-align: left;
+      color: #93c5fd;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #2d3f55;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+    th:hover { color: #e2e8f0; }
+    th.sort-asc::after  { content: " ↑"; color: #fb923c; }
+    th.sort-desc::after { content: " ↓"; color: #fb923c; }
+    td { padding: 10px 12px; border-bottom: 1px solid #1e2d42; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(59,130,246,0.06); }
+    tr:nth-child(even) td { background: rgba(19,31,46,0.4); }
+    tr:nth-child(even):hover td { background: rgba(59,130,246,0.06); }
+    .name { font-size: 14px; font-weight: 600; color: #e2e8f0; }
+    .code { font-size: 11px; color: #64748b; font-family: monospace; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .sector { color: #94a3b8; font-size: 12px; }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .badge.safe { background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+    .badge.warn { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    .legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    .legend span { display: flex; align-items: center; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #2d3f55; color: #94a3b8; font-size: 12px; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="tag">週K線選股 · wMA20_redraw</div>
+    <h1>週MA20 量縮回測選股</h1>
+    <p class="meta">資料日期：2026年  5月  8日 &nbsp;·&nbsp; 篩選結果：<span class="count">36 檔</span></p>
+    <div class="legend">
+      <span><span class="dot" style="background:#34d399"></span>正值 / 低量比 / 安全</span>
+      <span><span class="dot" style="background:#fb923c"></span>中等</span>
+      <span><span class="dot" style="background:#f87171"></span>負值 / 高量比 / 警示</span>
+      <span>點擊欄位標題可排序</span>
+    </div>
+  </header>
+
+  <div class="table-wrap">
+    <table id="mainTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable(0)">股票</th>
+          <th onclick="sortTable(1)">成交</th>
+          <th onclick="sortTable(2)">漲幅</th>
+          <th onclick="sortTable(3)">當前乖離</th>
+          <th onclick="sortTable(4)">最大正乖離</th>
+          <th onclick="sortTable(5)">近高回檔</th>
+          <th onclick="sortTable(6)">峰谷落差</th>
+          <th onclick="sortTable(7)">峰值(週)</th>
+          <th onclick="sortTable(8)">MA20角度</th>
+          <th onclick="sortTable(9)">量/峰值量</th>
+          <th onclick="sortTable(10)">長黑爆量</th>
+          <th onclick="sortTable(11)">成值(億)</th>
+          <th onclick="sortTable(12)">市值(百萬)</th>
+          <th>細產業</th>
+        </tr>
+      </thead>
+      <tbody>
+    <tr>
+      <td><strong class="name">華城</strong><br><span class="code">1519.TW</span></td>
+      <td class="num">896</td>
+      <td class="num" style="color:#34d399">0.56%</td>
+      <td class="num" style="color:#e2e8f0">0.85%</td>
+      <td class="num">25.5%</td>
+      <td class="num">19.64%</td>
+      <td class="num">39.28%</td>
+      <td class="num">10</td>
+      <td class="num" style="color:#fb923c">2</td>
+      <td class="num" style="color:#fb923c">0.75</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">47.3</td>
+      <td class="num">283028</td>
+      <td class="sector">變電設備</td>
+    </tr>
+    <tr>
+      <td><strong class="name">元太</strong><br><span class="code">8069.TW</span></td>
+      <td class="num">162</td>
+      <td class="num" style="color:#34d399">5.88%</td>
+      <td class="num" style="color:#f87171">-2.47%</td>
+      <td class="num">16.5%</td>
+      <td class="num">16.28%</td>
+      <td class="num">13.44%</td>
+      <td class="num">11</td>
+      <td class="num" style="color:#34d399">20.56</td>
+      <td class="num" style="color:#f87171">2.68</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">36.4</td>
+      <td class="num">187000</td>
+      <td class="sector">電子紙</td>
+    </tr>
+    <tr>
+      <td><strong class="name">東元</strong><br><span class="code">1504.TW</span></td>
+      <td class="num">72.8</td>
+      <td class="num" style="color:#f87171">-1.62%</td>
+      <td class="num" style="color:#f87171">-2.54%</td>
+      <td class="num">12.86%</td>
+      <td class="num">13.64%</td>
+      <td class="num">6.17%</td>
+      <td class="num">10</td>
+      <td class="num" style="color:#34d399">5.6</td>
+      <td class="num" style="color:#f87171">2.64</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">29.7</td>
+      <td class="num">173004</td>
+      <td class="sector">電機</td>
+    </tr>
+    <tr>
+      <td><strong class="name">士電</strong><br><span class="code">1503.TW</span></td>
+      <td class="num">202.5</td>
+      <td class="num" style="color:#34d399">1.5%</td>
+      <td class="num" style="color:#34d399">2.58%</td>
+      <td class="num">22.85%</td>
+      <td class="num">16.49%</td>
+      <td class="num">33.4%</td>
+      <td class="num">10</td>
+      <td class="num" style="color:#34d399">4.72</td>
+      <td class="num" style="color:#fb923c">0.64</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">13</td>
+      <td class="num">105496</td>
+      <td class="sector">電機</td>
+    </tr>
+    <tr>
+      <td><strong class="name">中興電</strong><br><span class="code">1513.TW</span></td>
+      <td class="num">158</td>
+      <td class="num" style="color:#34d399">0.96%</td>
+      <td class="num" style="color:#e2e8f0">0.72%</td>
+      <td class="num">13.47%</td>
+      <td class="num">11.24%</td>
+      <td class="num">18.82%</td>
+      <td class="num">10</td>
+      <td class="num" style="color:#34d399">3.72</td>
+      <td class="num" style="color:#f87171">1.34</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">28.3</td>
+      <td class="num">79491</td>
+      <td class="sector">電機</td>
+    </tr>
+    <tr>
+      <td><strong class="name">台特化</strong><br><span class="code">4772.TW</span></td>
+      <td class="num">321.5</td>
+      <td class="num" style="color:#34d399">4.38%</td>
+      <td class="num" style="color:#34d399">1.24%</td>
+      <td class="num">10.22%</td>
+      <td class="num">8.14%</td>
+      <td class="num">19%</td>
+      <td class="num">10</td>
+      <td class="num" style="color:#34d399">10.2</td>
+      <td class="num" style="color:#f87171">1.17</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">14.5</td>
+      <td class="num">47479</td>
+      <td class="sector">工業氣體</td>
+    </tr>
+    <tr>
+      <td><strong class="name">漢翔</strong><br><span class="code">2634.TW</span></td>
+      <td class="num">50.1</td>
+      <td class="num" style="color:#34d399">1.21%</td>
+      <td class="num" style="color:#f87171">-2.24%</td>
+      <td class="num">13.56%</td>
+      <td class="num">13.92%</td>
+      <td class="num">15.46%</td>
+      <td class="num">9</td>
+      <td class="num" style="color:#fb923c">0.24</td>
+      <td class="num" style="color:#34d399">0.51</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">5.6</td>
+      <td class="num">47187</td>
+      <td class="sector">飛機零件／製造</td>
+    </tr>
+    <tr>
+      <td><strong class="name">新日興</strong><br><span class="code">3376.TW</span></td>
+      <td class="num">202.5</td>
+      <td class="num" style="color:#f87171">-5.81%</td>
+      <td class="num" style="color:#f87171">-1.93%</td>
+      <td class="num">13.33%</td>
+      <td class="num">13.46%</td>
+      <td class="num">24.36%</td>
+      <td class="num">7</td>
+      <td class="num" style="color:#fb923c">0.29</td>
+      <td class="num" style="color:#34d399">0.43</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">13.2</td>
+      <td class="num">39638</td>
+      <td class="sector">樞紐</td>
+    </tr>
+    <tr>
+      <td><strong class="name">智易</strong><br><span class="code">3596.TW</span></td>
+      <td class="num">178</td>
+      <td class="num" style="color:#34d399">6.27%</td>
+      <td class="num" style="color:#e2e8f0">-0.86%</td>
+      <td class="num">19.19%</td>
+      <td class="num">16.82%</td>
+      <td class="num">20.56%</td>
+      <td class="num">8</td>
+      <td class="num" style="color:#34d399">10.62</td>
+      <td class="num" style="color:#fb923c">0.75</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">11.7</td>
+      <td class="num">39223</td>
+      <td class="sector">無線網路設備系統(WLAN)</td>
+    </tr>
+    <tr>
+      <td><strong class="name">豐興</strong><br><span class="code">2015.TW</span></td>
+      <td class="num">62.5</td>
+      <td class="num" style="color:#94a3b8">0%</td>
+      <td class="num" style="color:#f87171">-2.28%</td>
+      <td class="num">10.39%</td>
+      <td class="num">11.47%</td>
+      <td class="num">13.6%</td>
+      <td class="num">7</td>
+      <td class="num" style="color:#fb923c">1.55</td>
+      <td class="num" style="color:#fb923c">0.68</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.3</td>
+      <td class="num">36349</td>
+      <td class="sector">鋼筋</td>
+    </tr>
+    <tr>
+      <td><strong class="name">是方</strong><br><span class="code">6561.TW</span></td>
+      <td class="num">345</td>
+      <td class="num" style="color:#34d399">3.14%</td>
+      <td class="num" style="color:#f87171">-1.85%</td>
+      <td class="num">10.95%</td>
+      <td class="num">11.54%</td>
+      <td class="num">15.51%</td>
+      <td class="num">10</td>
+      <td class="num" style="color:#34d399">11.03</td>
+      <td class="num" style="color:#34d399">0.56</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.7</td>
+      <td class="num">26895</td>
+      <td class="sector">電信／數據服務</td>
+    </tr>
+    <tr>
+      <td><strong class="name">台灣虎航</strong><br><span class="code">6757.TW</span></td>
+      <td class="num">57</td>
+      <td class="num" style="color:#34d399">3.26%</td>
+      <td class="num" style="color:#f87171">-2.89%</td>
+      <td class="num">13.47%</td>
+      <td class="num">14.41%</td>
+      <td class="num">4.95%</td>
+      <td class="num">12</td>
+      <td class="num" style="color:#34d399">7.15</td>
+      <td class="num" style="color:#f87171">2.13</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">4.1</td>
+      <td class="num">26193</td>
+      <td class="sector">空運</td>
+    </tr>
+    <tr>
+      <td><strong class="name">櫻花</strong><br><span class="code">9911.TW</span></td>
+      <td class="num">83.2</td>
+      <td class="num" style="color:#f87171">-0.48%</td>
+      <td class="num" style="color:#f87171">-2.43%</td>
+      <td class="num">8.82%</td>
+      <td class="num">10.34%</td>
+      <td class="num">11.64%</td>
+      <td class="num">7</td>
+      <td class="num" style="color:#fb923c">0.43</td>
+      <td class="num" style="color:#f87171">0.86</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.2</td>
+      <td class="num">18502</td>
+      <td class="sector">廚衛電</td>
+    </tr>
+    <tr>
+      <td><strong class="name">全國</strong><br><span class="code">9937.TW</span></td>
+      <td class="num">57.1</td>
+      <td class="num" style="color:#34d399">0.53%</td>
+      <td class="num" style="color:#e2e8f0">-0.44%</td>
+      <td class="num">13.34%</td>
+      <td class="num">12.15%</td>
+      <td class="num">17.38%</td>
+      <td class="num">8</td>
+      <td class="num" style="color:#fb923c">0.52</td>
+      <td class="num" style="color:#34d399">0.06</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0</td>
+      <td class="num">17646</td>
+      <td class="sector">加油站</td>
+    </tr>
+    <tr>
+      <td><strong class="name">佳邦</strong><br><span class="code">6284.TW</span></td>
+      <td class="num">81.5</td>
+      <td class="num" style="color:#34d399">0.62%</td>
+      <td class="num" style="color:#f87171">-1.28%</td>
+      <td class="num">11.32%</td>
+      <td class="num">11.32%</td>
+      <td class="num">19.59%</td>
+      <td class="num">3</td>
+      <td class="num" style="color:#34d399">3.49</td>
+      <td class="num" style="color:#34d399">0.48</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">1.8</td>
+      <td class="num">12141</td>
+      <td class="sector">天線</td>
+    </tr>
+    <tr>
+      <td><strong class="name">中航</strong><br><span class="code">2612.TW</span></td>
+      <td class="num">57.9</td>
+      <td class="num" style="color:#f87171">-1.19%</td>
+      <td class="num" style="color:#f87171">-1.66%</td>
+      <td class="num">20.07%</td>
+      <td class="num">18.1%</td>
+      <td class="num">18.67%</td>
+      <td class="num">9</td>
+      <td class="num" style="color:#34d399">2.23</td>
+      <td class="num" style="color:#34d399">0.18</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.3</td>
+      <td class="num">11434</td>
+      <td class="sector">散裝航運</td>
+    </tr>
+    <tr>
+      <td><strong class="name">望隼</strong><br><span class="code">4771.TW</span></td>
+      <td class="num">187.5</td>
+      <td class="num" style="color:#f87171">-2.09%</td>
+      <td class="num" style="color:#34d399">2.92%</td>
+      <td class="num">10.33%</td>
+      <td class="num">6.72%</td>
+      <td class="num">16.67%</td>
+      <td class="num">6</td>
+      <td class="num" style="color:#fb923c">1.29</td>
+      <td class="num" style="color:#f87171">1.84</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.6</td>
+      <td class="num">10973</td>
+      <td class="sector">隱形眼鏡</td>
+    </tr>
+    <tr>
+      <td><strong class="name">亞航</strong><br><span class="code">2630.TW</span></td>
+      <td class="num">50.4</td>
+      <td class="num" style="color:#34d399">1.31%</td>
+      <td class="num" style="color:#e2e8f0">0.07%</td>
+      <td class="num">11.39%</td>
+      <td class="num">10.16%</td>
+      <td class="num">16.04%</td>
+      <td class="num">9</td>
+      <td class="num" style="color:#fb923c">0.21</td>
+      <td class="num" style="color:#34d399">0.37</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">1.4</td>
+      <td class="num">10555</td>
+      <td class="sector">飛機維修</td>
+    </tr>
+    <tr>
+      <td><strong class="name">金益鼎</strong><br><span class="code">8390.TW</span></td>
+      <td class="num">94.1</td>
+      <td class="num" style="color:#f87171">-0.32%</td>
+      <td class="num" style="color:#e2e8f0">0.16%</td>
+      <td class="num">18.15%</td>
+      <td class="num">15.23%</td>
+      <td class="num">27.48%</td>
+      <td class="num">9</td>
+      <td class="num" style="color:#34d399">5.09</td>
+      <td class="num" style="color:#34d399">0.36</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.7</td>
+      <td class="num">9044</td>
+      <td class="sector">回收焚化／掩埋清運</td>
+    </tr>
+    <tr>
+      <td><strong class="name">麗豐-KY</strong><br><span class="code">4137.TW</span></td>
+      <td class="num">107.5</td>
+      <td class="num" style="color:#94a3b8">0%</td>
+      <td class="num" style="color:#34d399">1.3%</td>
+      <td class="num">11.19%</td>
+      <td class="num">8.9%</td>
+      <td class="num">17.29%</td>
+      <td class="num">9</td>
+      <td class="num" style="color:#fb923c">1.58</td>
+      <td class="num" style="color:#34d399">0.31</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.2</td>
+      <td class="num">8867</td>
+      <td class="sector">美容</td>
+    </tr>
+    <tr>
+      <td><strong class="name">德昌</strong><br><span class="code">5511.TW</span></td>
+      <td class="num">70.8</td>
+      <td class="num" style="color:#f87171">-0.28%</td>
+      <td class="num" style="color:#34d399">2.18%</td>
+      <td class="num">9.4%</td>
+      <td class="num">6.6%</td>
+      <td class="num">16.75%</td>
+      <td class="num">7</td>
+      <td class="num" style="color:#fb923c">0.86</td>
+      <td class="num" style="color:#34d399">0.23</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.1</td>
+      <td class="num">8031</td>
+      <td class="sector">住宅建設</td>
+    </tr>
+    <tr>
+      <td><strong class="name">昇佳電子</strong><br><span class="code">6732.TW</span></td>
+      <td class="num">164</td>
+      <td class="num" style="color:#34d399">0.31%</td>
+      <td class="num" style="color:#f87171">-1.49%</td>
+      <td class="num">10.23%</td>
+      <td class="num">10.63%</td>
+      <td class="num">8.72%</td>
+      <td class="num">12</td>
+      <td class="num" style="color:#34d399">10.76</td>
+      <td class="num" style="color:#f87171">1.23</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.9</td>
+      <td class="num">8021</td>
+      <td class="sector">感測元件</td>
+    </tr>
+    <tr>
+      <td><strong class="name">智崴</strong><br><span class="code">5263.TW</span></td>
+      <td class="num">103.5</td>
+      <td class="num" style="color:#f87171">-0.48%</td>
+      <td class="num" style="color:#34d399">2.04%</td>
+      <td class="num">8.94%</td>
+      <td class="num">6.33%</td>
+      <td class="num">22.53%</td>
+      <td class="num">12</td>
+      <td class="num" style="color:#fb923c">0.43</td>
+      <td class="num" style="color:#f87171">1.2</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.2</td>
+      <td class="num">7648</td>
+      <td class="sector">商用遊戲機</td>
+    </tr>
+    <tr>
+      <td><strong class="name">八貫</strong><br><span class="code">1342.TW</span></td>
+      <td class="num">94.2</td>
+      <td class="num" style="color:#f87171">-1.46%</td>
+      <td class="num" style="color:#34d399">2.03%</td>
+      <td class="num">14.81%</td>
+      <td class="num">11.13%</td>
+      <td class="num">22.45%</td>
+      <td class="num">11</td>
+      <td class="num" style="color:#fb923c">1.46</td>
+      <td class="num" style="color:#34d399">0.55</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.4</td>
+      <td class="num">7347</td>
+      <td class="sector">塑膠皮布</td>
+    </tr>
+    <tr>
+      <td><strong class="name">偉訓</strong><br><span class="code">3032.TW</span></td>
+      <td class="num">70.7</td>
+      <td class="num" style="color:#f87171">-1.39%</td>
+      <td class="num" style="color:#34d399">1.32%</td>
+      <td class="num">9.34%</td>
+      <td class="num">7.34%</td>
+      <td class="num">6.55%</td>
+      <td class="num">12</td>
+      <td class="num" style="color:#34d399">5.51</td>
+      <td class="num" style="color:#f87171">2.56</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">1.7</td>
+      <td class="num">7302</td>
+      <td class="sector">機殼</td>
+    </tr>
+    <tr>
+      <td><strong class="name">傳奇</strong><br><span class="code">4994.TW</span></td>
+      <td class="num">97.9</td>
+      <td class="num" style="color:#f87171">-0.61%</td>
+      <td class="num" style="color:#e2e8f0">-1%</td>
+      <td class="num">11.23%</td>
+      <td class="num">11%</td>
+      <td class="num">17.36%</td>
+      <td class="num">9</td>
+      <td class="num" style="color:#34d399">2.03</td>
+      <td class="num" style="color:#34d399">0.49</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0</td>
+      <td class="num">6498</td>
+      <td class="sector">PC遊戲</td>
+    </tr>
+    <tr>
+      <td><strong class="name">商億-KY</strong><br><span class="code">8482.TW</span></td>
+      <td class="num">50</td>
+      <td class="num" style="color:#94a3b8">0%</td>
+      <td class="num" style="color:#e2e8f0">0.96%</td>
+      <td class="num">13.68%</td>
+      <td class="num">11.19%</td>
+      <td class="num">17.32%</td>
+      <td class="num">9</td>
+      <td class="num" style="color:#fb923c">0.7</td>
+      <td class="num" style="color:#34d399">0.35</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0</td>
+      <td class="num">5372</td>
+      <td class="sector">傢俱</td>
+    </tr>
+    <tr>
+      <td><strong class="name">展碁國際</strong><br><span class="code">6776.TW</span></td>
+      <td class="num">58.3</td>
+      <td class="num" style="color:#34d399">0.87%</td>
+      <td class="num" style="color:#e2e8f0">0.8%</td>
+      <td class="num">30.54%</td>
+      <td class="num">22.78%</td>
+      <td class="num">35.83%</td>
+      <td class="num">7</td>
+      <td class="num" style="color:#fb923c">0.57</td>
+      <td class="num" style="color:#34d399">0.09</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.3</td>
+      <td class="num">5339</td>
+      <td class="sector">電腦通路商</td>
+    </tr>
+    <tr>
+      <td><strong class="name">三洋實業</strong><br><span class="code">1472.TW</span></td>
+      <td class="num">91.2</td>
+      <td class="num" style="color:#f87171">-0.11%</td>
+      <td class="num" style="color:#e2e8f0">-0.23%</td>
+      <td class="num">8.41%</td>
+      <td class="num">7.97%</td>
+      <td class="num">14.23%</td>
+      <td class="num">7</td>
+      <td class="num" style="color:#fb923c">1.26</td>
+      <td class="num" style="color:#34d399">0.1</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0</td>
+      <td class="num">4786</td>
+      <td class="sector">基礎建設</td>
+    </tr>
+    <tr>
+      <td><strong class="name">生華科</strong><br><span class="code">6492.TW</span></td>
+      <td class="num">51.4</td>
+      <td class="num" style="color:#f87171">-1.15%</td>
+      <td class="num" style="color:#34d399">2.19%</td>
+      <td class="num">32.21%</td>
+      <td class="num">22.71%</td>
+      <td class="num">40.45%</td>
+      <td class="num">12</td>
+      <td class="num" style="color:#fb923c">1.29</td>
+      <td class="num" style="color:#34d399">0.17</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.2</td>
+      <td class="num">4621</td>
+      <td class="sector">新藥研發</td>
+    </tr>
+    <tr>
+      <td><strong class="name">泰金-KY</strong><br><span class="code">6629.TW</span></td>
+      <td class="num">119</td>
+      <td class="num" style="color:#94a3b8">0%</td>
+      <td class="num" style="color:#34d399">1.3%</td>
+      <td class="num">11.09%</td>
+      <td class="num">8.81%</td>
+      <td class="num">17.24%</td>
+      <td class="num">12</td>
+      <td class="num" style="color:#fb923c">0.86</td>
+      <td class="num" style="color:#f87171">0.93</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0</td>
+      <td class="num">4566</td>
+      <td class="sector">金屬加工／製品</td>
+    </tr>
+    <tr>
+      <td><strong class="name">華廣</strong><br><span class="code">4737.TW</span></td>
+      <td class="num">58.8</td>
+      <td class="num" style="color:#34d399">0.51%</td>
+      <td class="num" style="color:#f87171">-1.52%</td>
+      <td class="num">22.1%</td>
+      <td class="num">19.34%</td>
+      <td class="num">31%</td>
+      <td class="num">5</td>
+      <td class="num" style="color:#fb923c">0.86</td>
+      <td class="num" style="color:#34d399">0.49</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.1</td>
+      <td class="num">4544</td>
+      <td class="sector">血糖儀</td>
+    </tr>
+    <tr>
+      <td><strong class="name">鳳凰</strong><br><span class="code">5706.TW</span></td>
+      <td class="num">51.4</td>
+      <td class="num" style="color:#f87171">-0.96%</td>
+      <td class="num" style="color:#e2e8f0">0.82%</td>
+      <td class="num">12.2%</td>
+      <td class="num">10.14%</td>
+      <td class="num">20.37%</td>
+      <td class="num">3</td>
+      <td class="num" style="color:#fb923c">0.32</td>
+      <td class="num" style="color:#34d399">0.25</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.1</td>
+      <td class="num">4364</td>
+      <td class="sector">旅行社</td>
+    </tr>
+    <tr>
+      <td><strong class="name">向榮生技</strong><br><span class="code">6794.TW</span></td>
+      <td class="num">83.3</td>
+      <td class="num" style="color:#34d399">0.24%</td>
+      <td class="num" style="color:#e2e8f0">-0.97%</td>
+      <td class="num">10.8%</td>
+      <td class="num">10.62%</td>
+      <td class="num">24.25%</td>
+      <td class="num">10</td>
+      <td class="num" style="color:#fb923c">0.29</td>
+      <td class="num" style="color:#34d399">0.44</td>
+      <td class="num"><span class="badge safe">0 安全</span></td>
+      <td class="num">0</td>
+      <td class="num">4034</td>
+      <td class="sector">新藥研發</td>
+    </tr>
+    <tr>
+      <td><strong class="name">品安</strong><br><span class="code">8088.TW</span></td>
+      <td class="num">54</td>
+      <td class="num" style="color:#f87171">-2%</td>
+      <td class="num" style="color:#34d399">2.54%</td>
+      <td class="num">22.48%</td>
+      <td class="num">16.28%</td>
+      <td class="num">40%</td>
+      <td class="num">12</td>
+      <td class="num" style="color:#fb923c">1.46</td>
+      <td class="num" style="color:#34d399">0.52</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">1.6</td>
+      <td class="num">3289</td>
+      <td class="sector">記憶體模組</td>
+    </tr>
+    <tr>
+      <td><strong class="name">大塚</strong><br><span class="code">3570.TW</span></td>
+      <td class="num">166.5</td>
+      <td class="num" style="color:#34d399">1.22%</td>
+      <td class="num" style="color:#f87171">-1.89%</td>
+      <td class="num">12.55%</td>
+      <td class="num">12.83%</td>
+      <td class="num">15.45%</td>
+      <td class="num">10</td>
+      <td class="num" style="color:#34d399">2.72</td>
+      <td class="num" style="color:#34d399">0.5</td>
+      <td class="num"><span class="badge warn">1 警示</span></td>
+      <td class="num">0.1</td>
+      <td class="num">2846</td>
+      <td class="sector">軟體通路／代理</td>
+    </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <p>策略：週MA20量縮回測選股 · 執行環境：XQ 全球贏家 / 週K線選股腳本 · 資料日期：2026年  5月  8日</p>
+  </footer>
+
+</div>
+<script>
+  let sortCol = -1, sortDir = 1;
+  function getVal(td) {
+    const txt = td.innerText.replace(/%/g,'').replace(/,/g,'').trim();
+    const n = parseFloat(txt);
+    return isNaN(n) ? txt.toLowerCase() : n;
+  }
+  function sortTable(col) {
+    const table = document.getElementById('mainTable');
+    const ths   = table.querySelectorAll('th');
+    const tbody = table.querySelector('tbody');
+    const rows  = Array.from(tbody.querySelectorAll('tr'));
+    if (sortCol === col) sortDir *= -1;
+    else { sortCol = col; sortDir = 1; }
+    ths.forEach((th, i) => {
+      th.classList.remove('sort-asc','sort-desc');
+      if (i === col) th.classList.add(sortDir === 1 ? 'sort-asc' : 'sort-desc');
+    });
+    rows.sort((a, b) => {
+      const av = getVal(a.querySelectorAll('td')[col]);
+      const bv = getVal(b.querySelectorAll('td')[col]);
+      return av < bv ? -sortDir : av > bv ? sortDir : 0;
+    });
+    rows.forEach(r => tbody.appendChild(r));
+  }
+</script>
+</body>
+</html>
