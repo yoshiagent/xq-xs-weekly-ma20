@@ -137,15 +137,15 @@ then begin
     // 九宮格輸出欄位
     OutputField1(devNow,        "當前乖離率(%)");
     OutputField2(pullbackPct,   "近高回檔幅度(%)");
-    OutputField3(peakToTrough,  "峰谷落差(%)");
-    OutputField4(peakBar,       "峰值距今(週)");
-    OutputField5(troughBar,     "谷底距今(週)");
-    OutputField6(volRatioNow,   "量/均量比值");
-    OutputField7(ma20Angle,     "MA20迴歸角度");
-    OutputField8(volAbove,      "壓力量(週加總)");
-    OutputField9(volBelow,      "支撐量(週加總)");
-    OutputField10(alertCount,   "高檔長黑爆量(次)");
-    OutputField11(highestDev,   "期間最大正乖離(%)");
+    OutputField3(highestDev,    "期間最大正乖離(%)");
+    OutputField4(peakToTrough,  "峰谷落差(%)");
+    OutputField5(peakBar,       "峰值距今(週)");
+    OutputField6(troughBar,     "谷底距今(週)");
+    OutputField7(volRatioNow,   "量/均量比值");
+    OutputField8(ma20Angle,     "MA20迴歸角度");
+    OutputField9(volAbove,      "壓力量(週加總)");
+    OutputField10(volBelow,     "支撐量(週加總)");
+    OutputField11(alertCount,   "高檔長黑爆量(次)");
     outputfield(12, GetField("Close", "W")[20], 2, "週MA20扣抵");
     outputfield(21, GetField("成交金額(億)", "D"), 1, "成值");
     outputfield(22, GetField("總市值(元)", "D")/1000000, 0, "市值", order:=1);
