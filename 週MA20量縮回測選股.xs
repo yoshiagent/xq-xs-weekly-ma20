@@ -56,9 +56,9 @@ else
 // 峰值距今幾根週K棒（先算，供 lowestLow 回看期數使用）
 peakBar = NthHighestBar(1, GetField("High", "W"), paramLookback);
 
-// 回看期間週高點最高值 / 週低點最低值（谷底回看從峰值位置往前延伸）
+// 回看期間週高點最高值 / 週低點最低值（谷底只找峰值後的修正區間）
 highestHigh = Highest(GetField("High", "W"), paramLookback);
-lowestLow   = Lowest(GetField("Low", "W"), peakBar + paramLookback);
+lowestLow   = Lowest(GetField("Low", "W")[peakBar], paramLookback);
 
 // 歷史最大正乖離率（%）
 if Wma20 <> 0 then
@@ -88,8 +88,8 @@ else
 // 週MA20 線性迴歸角度（正值代表均線向上）
 ma20Angle = LinearRegAngle(Wma20, paramAnglePeriod);
 
-// 谷底距今幾根週K棒（回看期數與 lowestLow 一致）
-troughBar = NthLowestBar(1, GetField("Low", "W"), peakBar + paramLookback);
+// 谷底距今幾根週K棒（在峰值後的區間找谷底，加回 peakBar 偏移為距今週數）
+troughBar = NthLowestBar(1, GetField("Low", "W")[peakBar], paramLookback) + peakBar;
 
 // ── 壓力量 / 支撐量計算 ──────────────────────────────────
 // 以今日收盤為分界，遍歷回看期間每根週K棒：
